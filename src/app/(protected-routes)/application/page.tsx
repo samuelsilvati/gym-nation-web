@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth'
 import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
-import LogoutButton from '@/components/logoutButton'
 import { api } from '@/lib/api'
 import CurrentDate from '@/components/currentDate'
 import { Card } from '@/components/ui/card'
@@ -35,15 +34,6 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen">
-      <header className="fixed mx-auto w-screen border-b py-2 border bg-background/50 z-50 backdrop-blur-md">
-        <div className="container flex items-center justify-between">
-          <div>
-            Olá <span className="font-bold">{session?.user.name}</span>,
-            Welcome!
-          </div>
-          <LogoutButton />
-        </div>
-      </header>
       <div className="container mt-16 max-w-4xl px-2 md:px-8">
         <div>
           <div className="mb-3 w-full pt-3 text-center text-lg font-bold">
@@ -53,12 +43,14 @@ export default async function Home() {
           {exercises.map((exercise: ExerciseProps) => (
             <Card
               key={exercise.id}
-              className="mb-3 flex justify-between rounded-lg px-5"
+              className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
             >
               <button className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-start ">
-                    <p className="text-lg font-bold">{exercise.name}</p>
+                    <p className="text-md font-bold md:text-lg">
+                      {exercise.name}
+                    </p>
                     <p>
                       {exercise.sets} séries x {exercise.reps} repetições
                     </p>
