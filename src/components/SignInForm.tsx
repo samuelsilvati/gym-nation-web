@@ -87,7 +87,7 @@ function SignInForm() {
         )}
       </div>
 
-      <Button variant="outline" disabled={isLoading}>
+      <Button variant="default" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

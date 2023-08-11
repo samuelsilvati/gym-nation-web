@@ -16,7 +16,7 @@ export default async function PrivateLayout({
   }
   return (
     <>
-      <main>
+      <main className='bg-white dark:text-white dark:bg-background text-black'>
         <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </main>
     </>
