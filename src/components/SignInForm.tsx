@@ -55,7 +55,7 @@ function SignInForm() {
   return (
     <form
       onSubmit={handleSubmit(handleAuth)}
-      className="flex w-full max-w-xs flex-col gap-5 text-gray-800 md:max-w-sm"
+      className="flex w-full max-w-xs flex-col gap-6 md:max-w-sm"
     >
       <Toaster />
       <h1 className="text-center text-2xl font-bold text-gray-400">Login</h1>

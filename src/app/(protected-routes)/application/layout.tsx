@@ -31,7 +31,7 @@ export default async function PrivateLayout({
       <main className="bg-white text-black dark:bg-background dark:text-slate-200">
         <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </main>
-      <footer className="itens-center fixed bottom-0 z-50 mx-auto flex w-screen justify-evenly gap-3 border-t border-border bg-background/50 py-2 backdrop-blur-md sm:hidden">
+      <footer className="itens-center fixed bottom-0 z-40 mx-auto flex w-screen justify-evenly gap-3 border-t border-border bg-background/50 py-2 backdrop-blur-md sm:hidden">
         <Link
           href="/application"
           className="flex flex-col items-center justify-center gap-1 p-2 text-xs font-bold"
