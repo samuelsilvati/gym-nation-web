@@ -3,7 +3,7 @@ import DayOfWeek from '@/components/dayOfweek'
 import { Card } from '@/components/ui/card'
 import { api } from '@/lib/api'
 
-import { ChevronLeft, Loader2, Trash2, X } from 'lucide-react'
+import { ChevronLeft, Trash2 } from 'lucide-react'
 import { useSession as UseSession } from 'next-auth/react'
 import UseSWR from 'swr'
 
@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import SkeletonExercises from '@/components/skeletonExercises'
 
 interface ExerciseProps {
   id: number
@@ -56,23 +57,10 @@ function page({ params }: { params: { slug: string; id: string } }) {
     { fetcher },
   )
 
-  if (!session?.user)
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="mt-16 max-w-4xl px-2 md:px-8">
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-        </div>
-      </div>
-    )
+  if (!session?.user) return <SkeletonExercises />
 
   if (isValidating || !data) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="mt-16 max-w-4xl px-2 md:px-8">
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-        </div>
-      </div>
-    )
+    return <SkeletonExercises />
   }
 
   if (error)
@@ -101,7 +89,7 @@ function page({ params }: { params: { slug: string; id: string } }) {
           )}
           {data.map((exercise: ExerciseProps) => (
             <Card
-              className="mb-3 flex justify-between rounded-lg border px-5 dark:text-slate-200"
+              className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
               key={exercise.id}
             >
               <button className="w-full">
@@ -141,6 +129,7 @@ function page({ params }: { params: { slug: string; id: string } }) {
             </Card>
           ))}
         </div>
+
         <form className="mx-auto pt-4 text-center">
           <Dialog>
             <DialogTrigger asChild>
