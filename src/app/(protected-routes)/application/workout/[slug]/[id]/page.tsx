@@ -30,11 +30,29 @@ function page({ params }: { params: { slug: string; id: string } }) {
         },
       })
       .then((res) => res.data)
-
-  const { data, error, isLoading } = UseSWR(
+  const { data, error, isValidating } = UseSWR(
     `${process.env.NEXT_PUBLIC_API_URL}/exercises-by-day-of-week/${params.id}`,
     { fetcher },
   )
+
+  if (!session?.user)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="mt-16 max-w-4xl px-2 md:px-8">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+        </div>
+      </div>
+    )
+
+  if (isValidating || !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="mt-16 max-w-4xl px-2 md:px-8">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
   if (error)
     return (
@@ -44,14 +62,7 @@ function page({ params }: { params: { slug: string; id: string } }) {
         </div>
       </div>
     )
-  if (isLoading)
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="mt-16 max-w-4xl px-2 md:px-8">
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        </div>
-      </div>
-    )
+
   return (
     <div className="flex min-h-screen">
       <div className="container mt-16 max-w-4xl px-2 md:px-8">
