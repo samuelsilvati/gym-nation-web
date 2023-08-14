@@ -108,7 +108,7 @@ function ShowExercises({ slug, id }: PageProps) {
                     <DialogTitle>Are you sure absolutely sure?</DialogTitle>
                     <DialogDescription>
                       This action cannot be undone. This will permanently delete
-                      your account and remove your data from our servers.
+                      your exercise and from our servers.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>

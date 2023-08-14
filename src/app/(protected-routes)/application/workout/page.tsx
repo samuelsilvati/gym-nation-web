@@ -21,10 +21,7 @@ async function Workout() {
               </Link>
             </Card>
             <Card className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200">
-              <Link
-                href="/application/workout/segunda-feira/2"
-                className="w-full"
-              >
+              <Link href="/application/workout/segunda/2" className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-center">
                     <p className="text-md font-bold">Segunda</p>
@@ -33,10 +30,7 @@ async function Workout() {
               </Link>
             </Card>
             <Card className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200">
-              <Link
-                href="/application/workout/terca-feira/3"
-                className="w-full"
-              >
+              <Link href="/application/workout/terca/3" className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-center">
                     <p className="text-md font-bold">Terça</p>
@@ -45,10 +39,7 @@ async function Workout() {
               </Link>
             </Card>
             <Card className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200">
-              <Link
-                href="/application/workout/quarta-feira/4"
-                className="w-full"
-              >
+              <Link href="/application/workout/quarta/4" className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-center">
                     <p className="text-md font-bold">Quarta</p>
@@ -57,10 +48,7 @@ async function Workout() {
               </Link>
             </Card>
             <Card className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200">
-              <Link
-                href="/application/workout/quinta-feira/5"
-                className="w-full"
-              >
+              <Link href="/application/workout/quinta/5" className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-center">
                     <p className="text-md font-bold">Quinta</p>
@@ -69,10 +57,7 @@ async function Workout() {
               </Link>
             </Card>
             <Card className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200">
-              <Link
-                href="/application/workout/sexta-feira/6"
-                className="w-full"
-              >
+              <Link href="/application/workout/sexta/6" className="w-full">
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-center">
                     <p className="text-md font-bold">Sexta</p>
