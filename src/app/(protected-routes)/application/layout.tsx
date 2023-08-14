@@ -5,7 +5,7 @@ import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { HomeIcon, Dumbbell, UserCircle2 } from 'lucide-react'
-import LogoutButton from '@/components/logoutButton'
+import SignOutButton from '@/components/signoutButton'
 
 export default async function PrivateLayout({
   children,
@@ -17,15 +17,41 @@ export default async function PrivateLayout({
   if (!session) {
     redirect('/signin')
   }
+  const userName = session?.user.name
+  const firstName = userName.split(' ')[0]
   return (
     <>
       <header className="fixed z-50 mx-auto w-screen border-b border-border bg-background/50 py-2 backdrop-blur-md">
         <div className="container flex items-center justify-between">
           <div className="text-sm md:text-lg">
-            Olá <span className="font-bold">{session?.user.name}</span>,
-            Welcome!
+            Olá <span className="font-bold">{firstName}</span>, Welcome!
           </div>
-          <LogoutButton />
+          <div className="flex gap-3">
+            <div className="hidden gap-3 sm:flex">
+              <Link
+                href="/application"
+                className="flex items-center justify-center gap-1 p-2 text-xs font-bold"
+              >
+                <HomeIcon />
+                HOME
+              </Link>
+              <Link
+                href="/application/workout"
+                className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
+              >
+                <Dumbbell />
+                TREINOS
+              </Link>
+              <Link
+                href="/application"
+                className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
+              >
+                <UserCircle2 />
+                PERFIL
+              </Link>
+            </div>
+            <SignOutButton />
+          </div>
         </div>
       </header>
       <main className="bg-white text-black dark:bg-background dark:text-slate-200">
