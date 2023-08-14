@@ -34,7 +34,7 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen">
-      <div className="container mt-16 max-w-4xl px-2 md:px-8">
+      <div className="container mt-16 max-w-4xl px-2 pb-28 md:px-8 md:pb-0">
         <div>
           <div className="mb-3 w-full pt-3 text-center text-lg font-bold">
             <CurrentDate />
