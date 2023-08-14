@@ -25,10 +25,6 @@ type DayOfWeekProps = {
 }
 
 const createExerciseFormSchema = z.object({
-  id: z
-    .string()
-    .transform((value) => parseInt(value, 10))
-    .optional(),
   name: z.string().nonempty('Campo obrigatório'),
   description: z.string(),
   sets: z.string().nonempty('Campo obrigatório'),
@@ -48,12 +44,12 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm<CreateExerciseFormaData>({
     resolver: zodResolver(createExerciseFormSchema),
   })
 
-  console.log(errors)
+  // console.log(errors)
 
   const { data: session } = useSession()
 
