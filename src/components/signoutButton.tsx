@@ -2,8 +2,9 @@
 import { signOut } from 'next-auth/react'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
+import { LogOut } from 'lucide-react'
 
-function LogoutButton() {
+function SignOutButton() {
   const router = useRouter()
   async function logout() {
     await signOut({
@@ -12,7 +13,11 @@ function LogoutButton() {
 
     router.replace('/signin')
   }
-  return <Button onClick={logout}>Logout</Button>
+  return (
+    <Button variant={'outline'} onClick={logout} title="Sair" aria-label="Sair">
+      <LogOut />
+    </Button>
+  )
 }
 
-export default LogoutButton
+export default SignOutButton
