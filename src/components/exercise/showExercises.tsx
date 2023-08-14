@@ -21,6 +21,7 @@ import axios from 'axios'
 import CreateExercise from './createExercise'
 import DeleteButton from './deleteButton'
 import SkeletonExercises from './skeletonExercises'
+import EditExercise from './editExercise'
 
 interface ExerciseProps {
   id: number
@@ -76,7 +77,15 @@ function ShowExercises({ slug, id }: PageProps) {
             className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
             key={exercise.id}
           >
-            <button className="w-full">
+            <EditExercise
+              id={exercise.id}
+              name={exercise.name}
+              reps={exercise.reps}
+              sets={exercise.sets}
+              description={exercise.description}
+              dayOfWeek={id}
+              muscleGroupId={exercise.muscleGroupId}
+            >
               <div className="flex h-16 items-center py-3 pl-2">
                 <div className="flex flex-grow flex-col items-start ">
                   <p className="text-md font-bold md:text-lg">
@@ -87,7 +96,8 @@ function ShowExercises({ slug, id }: PageProps) {
                   </p>
                 </div>
               </div>
-            </button>
+            </EditExercise>
+
             <form className="flex justify-center">
               <Dialog>
                 <DialogTrigger className="text-red-900 dark:text-red-200">
