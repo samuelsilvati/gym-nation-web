@@ -20,8 +20,8 @@ export default async function Home() {
 
   const token = session?.user.token
 
-  // const currentDayOfWeek = new Date().getDay() + 1
-  const currentDayOfWeek = 2
+  const currentDayOfWeek = new Date().getDay() + 1
+  // const currentDayOfWeek = 2
   const response = await api.get(
     `/exercises-by-day-of-week/${currentDayOfWeek}`,
     {
