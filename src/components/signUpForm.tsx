@@ -10,16 +10,20 @@ import { Input } from './ui/input'
 import { Loader2 } from 'lucide-react'
 import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/components/ui/use-toast'
-import { signIn } from 'next-auth/react'
+import { api } from '@/lib/api'
 
 const createUserformSchema = z.object({
+  name: z
+    .string()
+    .nonempty('Nome obrigatório')
+    .min(4, 'A senha deve ter pelo menos 4 caracteres'),
   email: z.string().nonempty('E-mail obrigatório').email('E-mail inválido'),
   password: z.string().min(4, 'A senha deve ter pelo menos 4 caracteres'),
 })
 
 type CreateUserFormData = z.infer<typeof createUserformSchema>
 
-function SignInForm() {
+function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
@@ -34,23 +38,23 @@ function SignInForm() {
   async function handleAuth(data: CreateUserFormData) {
     setIsLoading(true)
 
-    const UserData = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    })
-
-    if (UserData?.error) {
-      toast({
-        title: 'Usuário ou senha incorretos',
-        variant: 'destructive',
+    api
+      .post('/signup', data)
+      .then(() => {
+        toast({
+          title: 'Conta criada, faça login para continuar!',
+          variant: 'default',
+        })
+        router.push('/signin')
       })
+      .catch((err) => {
+        setIsLoading(false)
 
-      setIsLoading(false)
-      return
-    }
-
-    router.replace('/application')
+        toast({
+          title: `${err.response.data.message}`,
+          variant: 'destructive',
+        })
+      })
   }
   return (
     <form
@@ -58,7 +62,24 @@ function SignInForm() {
       className="flex w-full max-w-xs flex-col gap-6 md:max-w-sm"
     >
       <Toaster />
-      <h1 className="text-center text-2xl font-bold">Login</h1>
+      <h1 className="text-center text-2xl font-bold">Fazer Cadastro</h1>
+      <p className="text-center text-gray-400">
+        Entre com seus dados abaixo para criar sua conta
+      </p>
+      <div>
+        <Input
+          type="text"
+          placeholder="Nome Completo"
+          {...register('name')}
+          disabled={isLoading}
+        />
+
+        {errors.name && (
+          <span className="absolute text-xs text-red-400">
+            {errors.name.message}{' '}
+          </span>
+        )}
+      </div>
       <div>
         <Input
           type="email"
@@ -94,27 +115,21 @@ function SignInForm() {
             Aguarde
           </>
         ) : (
-          'Login'
+          'Criar'
         )}
       </Button>
 
       <div>
+        <span className="text-gray-400">Já tem cadastro? </span>
         <Link
           href="/signin"
-          className="text-gray-400 transition-colors hover:opacity-70"
+          className="text-gray-400 underline transition-all hover:opacity-70"
         >
-          Esqueci minha senha
-        </Link>
-
-        <Link
-          href="/signup"
-          className="float-right text-gray-400 transition-colors hover:opacity-70"
-        >
-          Criar conta
+          Fazer Login
         </Link>
       </div>
     </form>
   )
 }
 
-export default SignInForm
+export default SignUpForm
