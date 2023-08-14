@@ -58,7 +58,7 @@ function SignInForm() {
       className="flex w-full max-w-xs flex-col gap-6 md:max-w-sm"
     >
       <Toaster />
-      <h1 className="text-center text-2xl font-bold text-gray-400">Login</h1>
+      <h1 className="text-center text-2xl font-bold">Login</h1>
       <div>
         <Input
           type="email"
@@ -107,7 +107,7 @@ function SignInForm() {
         </Link>
 
         <Link
-          href="/signin"
+          href="/signup"
           className="float-right text-gray-400 transition-colors hover:opacity-70"
         >
           Criar conta
