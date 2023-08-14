@@ -3,7 +3,6 @@ import DayOfWeek from '@/components/dayOfweek'
 import { Card } from '@/components/ui/card'
 
 import { ChevronLeft, Trash2 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import UseSWR from 'swr'
 
 import Link from 'next/link'
@@ -39,14 +38,11 @@ type PageProps = {
 }
 
 function ShowExercises({ slug, id }: PageProps) {
-  const { data: session } = useSession()
   const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
   const { data, error, isValidating } = UseSWR(`/api/exercises?id=${id}`, {
     fetcher,
   })
-
-  if (!session?.user) return <SkeletonExercises />
 
   if (isValidating || !data) {
     return <SkeletonExercises />
