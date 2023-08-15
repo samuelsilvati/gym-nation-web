@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import { Button } from '../ui/button'
 
 type DeleteButtonProps = {
-  exerciseId: number
+  exerciseId: string
 }
 
 function DeleteButton({ exerciseId }: DeleteButtonProps) {

@@ -21,7 +21,7 @@ import { Loader2 } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
 
 type EditExerciseProps = {
-  id: number
+  id: string
   name: string
   reps: string
   sets: string
