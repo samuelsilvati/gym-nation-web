@@ -23,8 +23,8 @@ export default async function PrivateLayout({
   return (
     <>
       <header className="fixed z-50 mx-auto w-screen border-b border-border bg-background/50 py-2 backdrop-blur-md">
-        <div className="container flex items-center justify-between">
-          <div className="text-sm md:text-lg">
+        <div className="container flex items-center justify-between px-3 sm:px-8">
+          <div className="text-lg">
             Olá <span className="font-bold">{firstName}</span>!
           </div>
           <div className="flex gap-3">
