@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { HomeIcon, Dumbbell, UserCircle2 } from 'lucide-react'
 import SignOutButton from '@/components/signoutButton'
+import { ModeToggle } from '@/components/themerModeToggle'
 
 export default async function PrivateLayout({
   children,
@@ -24,7 +25,7 @@ export default async function PrivateLayout({
       <header className="fixed z-50 mx-auto w-screen border-b border-border bg-background/50 py-2 backdrop-blur-md">
         <div className="container flex items-center justify-between">
           <div className="text-sm md:text-lg">
-            Olá <span className="font-bold">{firstName}</span>, Welcome!
+            Olá <span className="font-bold">{firstName}</span>!
           </div>
           <div className="flex gap-3">
             <div className="hidden gap-3 sm:flex">
@@ -50,6 +51,7 @@ export default async function PrivateLayout({
                 PERFIL
               </Link>
             </div>
+            <ModeToggle />
             <SignOutButton />
           </div>
         </div>

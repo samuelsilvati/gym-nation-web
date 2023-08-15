@@ -1,3 +1,4 @@
+import { ModeToggle } from '@/components/themerModeToggle'
 import Link from 'next/link'
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       >
         Login
       </Link>
+      <ModeToggle />
     </div>
   )
 }
