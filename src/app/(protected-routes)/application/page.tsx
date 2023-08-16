@@ -4,10 +4,10 @@ import { api } from '@/lib/api'
 import CurrentDate from '@/components/currentDate'
 import { Card } from '@/components/ui/card'
 import ShowExerciseDetails from '@/components/exercise/showDetails'
-import { Switch } from '@/components/ui/switch'
+import CheckedExercise from '@/components/exercise/checkedExercise'
 
 interface ExerciseProps {
-  id: number
+  id: string
   name: string
   reps: string
   sets: string
@@ -22,7 +22,6 @@ export default async function Home() {
   const token = session?.user.token
 
   const currentDayOfWeek = new Date().getDay() + 1
-  // const currentDayOfWeek = 2
   const response = await api.get(
     `/exercises-by-day-of-week/${currentDayOfWeek}`,
     {
@@ -65,7 +64,7 @@ export default async function Home() {
               </ShowExerciseDetails>
               <div className="flex w-16 items-center justify-center">
                 <div className="flex items-center p-2">
-                  <Switch id="airplane-mode" />
+                  <CheckedExercise id={exercise.id} />
                 </div>
               </div>
             </Card>
