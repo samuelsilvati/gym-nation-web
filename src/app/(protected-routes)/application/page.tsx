@@ -3,6 +3,7 @@ import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
 import { api } from '@/lib/api'
 import CurrentDate from '@/components/currentDate'
 import { Card } from '@/components/ui/card'
+import ShowExerciseDetails from '@/components/exercise/showDetails'
 import { Switch } from '@/components/ui/switch'
 
 interface ExerciseProps {
@@ -45,7 +46,12 @@ export default async function Home() {
               key={exercise.id}
               className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
             >
-              <button className="w-full">
+              <ShowExerciseDetails
+                name={exercise.name}
+                reps={exercise.reps}
+                sets={exercise.sets}
+                description={exercise.description}
+              >
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
@@ -56,7 +62,7 @@ export default async function Home() {
                     </p>
                   </div>
                 </div>
-              </button>
+              </ShowExerciseDetails>
               <div className="flex w-16 items-center justify-center">
                 <div className="flex items-center p-2">
                   <Switch id="airplane-mode" />
