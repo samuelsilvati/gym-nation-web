@@ -2,7 +2,7 @@
 import DayOfWeek from '@/components/dayOfweek'
 import { Card } from '@/components/ui/card'
 
-import { ChevronLeft, Trash2 } from 'lucide-react'
+import { ChevronLeft, GripVertical, Trash2 } from 'lucide-react'
 import UseSWR from 'swr'
 
 import Link from 'next/link'
@@ -23,8 +23,17 @@ import DeleteButton from './deleteButton'
 import SkeletonExercises from './skeletonExercises'
 import EditExercise from './editExercise'
 
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from 'react-beautiful-dnd'
+import { useEffect, useState } from 'react'
+import { api } from '@/lib/api'
+
 interface ExerciseProps {
-  id: number
+  id: string
   name: string
   reps: string
   sets: string
@@ -39,11 +48,18 @@ type PageProps = {
 }
 
 function ShowExercises({ slug, id }: PageProps) {
+  const [orderedData, setOrderedData] = useState<ExerciseProps[]>([])
   const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
   const { data, error, isValidating } = UseSWR(`/api/exercises?id=${id}`, {
     fetcher,
   })
+
+  useEffect(() => {
+    if (data) {
+      setOrderedData([...data])
+    }
+  }, [data])
 
   if (isValidating || !data) {
     return <SkeletonExercises />
@@ -57,6 +73,33 @@ function ShowExercises({ slug, id }: PageProps) {
         </div>
       </div>
     )
+
+  const handleDragDrop = async (results: DropResult) => {
+    const { source, destination, type } = results
+    if (!destination) return
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return
+    if (type === 'group') {
+      const reorderedExercises = [...orderedData]
+      const sourceIndex = source.index
+      const destinationIndex = destination.index
+      const [removedExercise] = reorderedExercises.splice(sourceIndex, 1)
+      reorderedExercises.splice(destinationIndex, 0, removedExercise)
+      setOrderedData(reorderedExercises)
+      const newOrder = reorderedExercises.map((exercise) => exercise.id)
+      const data = {
+        exerciseOrder: newOrder,
+      }
+      try {
+        await axios.post('/api/exercises', data)
+      } catch (error) {
+        console.error('Erro ao salvar a ordem dos exercícios:', error)
+      }
+    }
+  }
 
   return (
     <div className="container mt-16 max-w-4xl px-2 md:px-8">
@@ -72,53 +115,79 @@ function ShowExercises({ slug, id }: PageProps) {
             Sem atividades nesse dia!
           </div>
         )}
-        {data.map((exercise: ExerciseProps) => (
-          <Card
-            className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
-            key={exercise.id}
-          >
-            <EditExercise
-              id={exercise.id}
-              name={exercise.name}
-              reps={exercise.reps}
-              sets={exercise.sets}
-              description={exercise.description}
-              dayOfWeek={id}
-              muscleGroupId={exercise.muscleGroupId}
-            >
-              <div className="flex h-16 items-center py-3 pl-2">
-                <div className="flex flex-grow flex-col items-start ">
-                  <p className="text-md font-bold md:text-lg">
-                    {exercise.name}
-                  </p>
-                  <p>
-                    {exercise.sets} séries x {exercise.reps} repetições
-                  </p>
-                </div>
-              </div>
-            </EditExercise>
+        <DragDropContext onDragEnd={handleDragDrop}>
+          <Droppable droppableId="ROOT" type="group">
+            {(provided) => (
+              <div ref={provided.innerRef}>
+                {orderedData.map((exercise: ExerciseProps, index: number) => (
+                  <Draggable
+                    draggableId={exercise.id}
+                    key={exercise.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <Card
+                        className="mb-3 flex items-center justify-between rounded-lg px-4 dark:text-slate-200"
+                        {...provided.dragHandleProps}
+                        {...provided.draggableProps}
+                        ref={provided.innerRef}
+                      >
+                        <div className="-ml-1 pr-1">
+                          <GripVertical />
+                        </div>
+                        <EditExercise
+                          id={exercise.id}
+                          name={exercise.name}
+                          reps={exercise.reps}
+                          sets={exercise.sets}
+                          description={exercise.description}
+                          dayOfWeek={id}
+                          muscleGroupId={exercise.muscleGroupId}
+                        >
+                          <div className="flex h-16 items-center py-3 pl-2">
+                            <div className="flex flex-grow flex-col items-start ">
+                              <p className="text-md font-bold md:text-lg">
+                                {exercise.name}
+                              </p>
+                              <p>
+                                {exercise.sets} séries x {exercise.reps}{' '}
+                                repetições
+                              </p>
+                            </div>
+                          </div>
+                        </EditExercise>
 
-            <form className="flex justify-center">
-              <Dialog>
-                <DialogTrigger className="text-red-900 dark:text-red-200">
-                  <Trash2 />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Are you sure absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      your exercise and from our servers.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DeleteButton exerciseId={exercise.id} />
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </form>
-          </Card>
-        ))}
+                        <form className="flex justify-center">
+                          <Dialog>
+                            <DialogTrigger className="text-red-900 dark:text-red-200">
+                              <Trash2 />
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Are you sure absolutely sure?
+                                </DialogTitle>
+                                <DialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete your exercise and from our
+                                  servers.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <DeleteButton exerciseId={exercise.id} />
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        </form>
+                      </Card>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
       <div className="mx-auto pt-4 text-center">
         <CreateExercise dayOfWeek={id} />
