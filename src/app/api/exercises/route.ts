@@ -19,3 +19,19 @@ export async function GET(request: Request) {
 
   return NextResponse.json(exercises)
 }
+
+export async function POST(request: Request) {
+  const data = await request.json()
+  const session = await getServerSession(nextAuthOptions)
+  const res = await fetch(`${process.env.API_URL}/exercise-order`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session?.user.token}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  const response = await res.json()
+  return NextResponse.json(response)
+}
