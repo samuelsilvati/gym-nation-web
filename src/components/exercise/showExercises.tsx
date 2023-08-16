@@ -2,24 +2,13 @@
 import DayOfWeek from '@/components/dayOfweek'
 import { Card } from '@/components/ui/card'
 
-import { ChevronLeft, GripVertical, Trash2 } from 'lucide-react'
+import { ChevronLeft, GripVertical } from 'lucide-react'
 import UseSWR from 'swr'
 
 import Link from 'next/link'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-
 import axios from 'axios'
 import CreateExercise from './createExercise'
-import DeleteButton from './deleteButton'
 import SkeletonExercises from './skeletonExercises'
 import EditExercise from './editExercise'
 
@@ -30,7 +19,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd'
 import { useEffect, useState } from 'react'
-import { api } from '@/lib/api'
+import DeleteExercise from './deleteExercise'
 
 interface ExerciseProps {
   id: string
@@ -157,28 +146,7 @@ function ShowExercises({ slug, id }: PageProps) {
                           </div>
                         </EditExercise>
 
-                        <form className="flex justify-center">
-                          <Dialog>
-                            <DialogTrigger className="text-red-900 dark:text-red-200">
-                              <Trash2 />
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Are you sure absolutely sure?
-                                </DialogTitle>
-                                <DialogDescription>
-                                  This action cannot be undone. This will
-                                  permanently delete your exercise and from our
-                                  servers.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DeleteButton exerciseId={exercise.id} />
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                        </form>
+                        <DeleteExercise exerciseId={exercise.id} />
                       </Card>
                     )}
                   </Draggable>
