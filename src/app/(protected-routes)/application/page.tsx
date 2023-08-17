@@ -21,7 +21,13 @@ export default async function Home() {
 
   const token = session?.user.token
 
-  const currentDayOfWeek = new Date().getDay() + 1
+  const date = new Date()
+  const saoPauloTimeZone = 'America/Sao_Paulo'
+  const options = { timeZone: saoPauloTimeZone }
+
+  const currentDayOfWeek =
+    new Date(date.toLocaleString('en-US', options)).getDay() + 1
+
   const response = await api.get(
     `/exercises-by-day-of-week/${currentDayOfWeek}`,
     {

@@ -2,11 +2,8 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
-import timezone from 'dayjs/plugin/timezone'
 
 dayjs.locale('pt-br')
-dayjs.extend(timezone)
-dayjs.tz.setDefault('America/Sao_Paulo')
 
 function CurrentDate() {
   const capitalizeFirstLetter = (str: string) => {
