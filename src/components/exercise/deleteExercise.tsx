@@ -1,6 +1,4 @@
 'use client'
-import { api } from '@/lib/api'
-import { useSession } from 'next-auth/react'
 import { Button } from '../ui/button'
 import {
   Dialog,
@@ -11,29 +9,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { Trash2 } from 'lucide-react'
+import { Loader2, Trash2 } from 'lucide-react'
+import axios from 'axios'
+import { useToast } from '../ui/use-toast'
+import { Toaster } from '../ui/toaster'
+import { useState } from 'react'
 
 type DeleteExerciseProps = {
   exerciseId: string
 }
 
 function DeleteExercise({ exerciseId }: DeleteExerciseProps) {
-  const { data: session } = useSession()
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
 
-  function handleDelete() {
+  async function handleDelete() {
+    setIsLoading(true)
     try {
-      api.delete(`/exercise/${exerciseId}`, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
-        },
-      })
+      await axios.delete(`/api/exercises?id=${exerciseId}`)
       window.location.reload()
     } catch (error) {
-      console.log(error)
+      setIsLoading(false)
+      toast({
+        title: `Não foi possível remover`,
+        variant: 'destructive',
+      })
     }
   }
   return (
     <Dialog>
+      <Toaster />
       <DialogTrigger className="text-red-900 dark:text-red-200">
         <Trash2 />
       </DialogTrigger>
@@ -45,8 +50,19 @@ function DeleteExercise({ exerciseId }: DeleteExerciseProps) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={handleDelete} variant={'destructive'}>
-            Remove
+          <Button
+            onClick={handleDelete}
+            variant={'destructive'}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Aguarde
+              </>
+            ) : (
+              'Remover'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
