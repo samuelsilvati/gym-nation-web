@@ -35,3 +35,22 @@ export async function POST(request: Request) {
   const response = await res.json()
   return NextResponse.json(response)
 }
+
+export async function DELETE(request: Request) {
+  const session = await getServerSession(nextAuthOptions)
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  const res = await fetch(`${process.env.API_URL}/exercise/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session?.user.token}`,
+    },
+  })
+  if (!res.ok) {
+    return NextResponse.error()
+  }
+  const exercises = await res.json()
+
+  return NextResponse.json(exercises)
+}
