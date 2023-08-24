@@ -68,8 +68,6 @@ function EditExercise({
     resolver: zodResolver(createExerciseFormSchema),
   })
 
-  // console.log(errors)
-
   const { data: session } = useSession()
 
   async function createExercise(data: EditExerciseFormaData) {
@@ -106,8 +104,8 @@ function EditExercise({
           <DialogHeader>
             <DialogTitle>Editar exercício</DialogTitle>
             <DialogDescription>
-              Make changes to your exercise here. Click save when you{"'"}re
-              done.
+              Faça alterações no seu exercício aqui. Clique em salvar quando
+              terminar.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

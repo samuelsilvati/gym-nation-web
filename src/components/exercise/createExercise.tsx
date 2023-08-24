@@ -49,8 +49,6 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
     resolver: zodResolver(createExerciseFormSchema),
   })
 
-  // console.log(errors)
-
   const { data: session } = useSession()
 
   async function createExercise(data: CreateExerciseFormaData) {
@@ -87,8 +85,7 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
           <DialogHeader>
             <DialogTitle>Adicionar exercício</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you{"'"}re
-              done.
+              Adicione o exercício aqui. Clique em adicionar quando terminar.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
