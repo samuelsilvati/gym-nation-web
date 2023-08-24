@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { HomeIcon, Dumbbell, UserCircle2 } from 'lucide-react'
 import SignOutButton from '@/components/signoutButton'
 import { ModeToggle } from '@/components/themerModeToggle'
+import MenuFooter from '@/components/menuFooter'
 
 export default async function PrivateLayout({
   children,
@@ -59,28 +60,8 @@ export default async function PrivateLayout({
       <main className="bg-white text-black dark:bg-background dark:text-slate-200">
         <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </main>
-      <footer className="itens-center fixed bottom-0 z-40 mx-auto flex w-screen justify-evenly gap-3 border-t border-border bg-background/50 py-2 backdrop-blur-md sm:hidden">
-        <Link
-          href="/application"
-          className="flex flex-col items-center justify-center gap-1 p-2 text-xs font-bold"
-        >
-          <HomeIcon />
-          HOME
-        </Link>
-        <Link
-          href="/application/workout"
-          className="flex flex-col items-center justify-center gap-2 p-2 text-xs font-bold"
-        >
-          <Dumbbell />
-          TREINOS
-        </Link>
-        <Link
-          href="/application"
-          className="flex flex-col items-center justify-center gap-2 p-2 text-xs font-bold"
-        >
-          <UserCircle2 />
-          PERFIL
-        </Link>
+      <footer className="itens-center fixed bottom-0 z-40 mx-auto flex w-screen justify-evenly gap-3 border-t border-border bg-background/50 pt-2 backdrop-blur-md sm:hidden">
+        <MenuFooter />
       </footer>
     </>
   )
