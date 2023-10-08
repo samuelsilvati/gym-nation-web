@@ -20,16 +20,18 @@ export default async function PrivateLayout({
   children: ReactNode
 }) {
   const session = await getServerSession(nextAuthOptions)
-  const ApiToken = session?.user.token
-  const TokenAge: ApiToken = decode(ApiToken as string)
-  const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
 
   if (!session) {
-    redirect('/signin')
+    return redirect('/signin')
   }
 
-  if (currentTimestampInSeconds >= TokenAge.exp) {
-    redirect('/signout')
+  if (session) {
+    const ApiToken = session?.user.token
+    const TokenAge: ApiToken = decode(ApiToken as string)
+    const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
+    if (currentTimestampInSeconds >= TokenAge.exp) {
+      return redirect('/signout')
+    }
   }
 
   const userName = session?.user.name
