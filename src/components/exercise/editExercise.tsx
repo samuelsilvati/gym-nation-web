@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { api } from '@/lib/api'
 import { useSession } from 'next-auth/react'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
 import {
@@ -35,15 +35,16 @@ type EditExerciseProps = {
   sets: string
   description: string
   dayOfWeek: string
-  muscleGroupId: string
+  muscleGroupId: string | number
+  exercisesLibId?: string | null
 }
 
 type ButtonProps = {
   children: ReactNode
 }
 
-const createExerciseFormSchema = z.object({
-  name: z.string().nonempty('Campo obrigatório'),
+const editExerciseFormSchema = z.object({
+  name: z.string(),
   description: z.string(),
   sets: z.string().nonempty('Campo obrigatório'),
   reps: z.string().nonempty('Campo obrigatório'),
@@ -52,6 +53,11 @@ const createExerciseFormSchema = z.object({
     .nonempty('Campo obrigatório')
     .transform((value) => parseInt(value, 10)),
   dayOfWeekId: z.string().transform((value) => parseInt(value, 10)),
+  exercisesLibId: z
+    .union([z.string().nonempty(), z.null(), z.undefined()])
+    .transform((value) => value || null)
+    .nullable()
+    .optional(),
 })
 
 function EditExercise({
@@ -62,32 +68,47 @@ function EditExercise({
   description,
   dayOfWeek,
   muscleGroupId,
+  exercisesLibId,
   children,
 }: EditExerciseProps & ButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [libraryExercises, setLibraryExercises] = useState<any[]>([])
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<
+    string | undefined
+  >(undefined)
+  const [open, setOpen] = useState(false)
   const { toast } = useToast()
-  type EditExerciseFormaData = z.infer<typeof createExerciseFormSchema>
+  type EditExerciseFormaData = z.infer<typeof editExerciseFormSchema>
 
   const {
     register,
     handleSubmit,
+    watch,
     control,
     // formState: { errors },
   } = useForm<EditExerciseFormaData>({
-    resolver: zodResolver(createExerciseFormSchema),
+    resolver: zodResolver(editExerciseFormSchema),
     defaultValues: {
       name,
       reps,
       sets,
       description,
-      muscleGroupId: muscleGroupId ? Number(muscleGroupId) : undefined,
-      dayOfWeekId: dayOfWeek ? Number(dayOfWeek) : undefined,
-    },
+      muscleGroupId: String(muscleGroupId),
+      exercisesLibId, // Assuming exercisesLibId is not used here
+    } as unknown as EditExerciseFormaData,
   })
 
   const { data: session } = useSession()
+  const muscleGroupIdWatch = watch('muscleGroupId')
 
-  async function createExercise(data: EditExerciseFormaData) {
+  useEffect(() => {
+    if (exercisesLibId && muscleGroupIdWatch) {
+      setSelectedMuscleGroup(String(muscleGroupIdWatch))
+    } else {
+      setSelectedMuscleGroup(undefined)
+    }
+  }, [exercisesLibId, muscleGroupIdWatch])
+  async function editExercise(data: EditExerciseFormaData) {
     setIsLoading(true)
     try {
       await api.put(`/exercise/${id}`, data, {
@@ -105,14 +126,30 @@ function EditExercise({
       setIsLoading(false)
     }
   }
+  useEffect(() => {
+    if (open && selectedMuscleGroup) {
+      setIsLoading(true)
+      api
+        .get(`/exercisesLib-by-group/${selectedMuscleGroup} `, {
+          headers: {
+            Authorization: `Bearer ${session?.user.token}`,
+          },
+        })
+        .then((res) => {
+          setLibraryExercises(res.data)
+          setIsLoading(false)
+        })
+    }
+  }, [exercisesLibId, open, selectedMuscleGroup, session?.user.token])
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="w-full">{children}</button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit(createExercise)}>
+        <form onSubmit={handleSubmit(editExercise, (e) => console.log(e))}>
           <Input
+            value={dayOfWeek}
             className="invisible hidden"
             {...register('dayOfWeekId')}
             disabled={isLoading}
@@ -124,16 +161,7 @@ function EditExercise({
               terminar.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 items-center gap-4">
-              <Input
-                placeholder="Nome do Exercício"
-                className="col-span-3"
-                defaultValue={name}
-                {...register('name')}
-                disabled={isLoading}
-              />
-            </div>
+          <div className="flex flex-col gap-4 py-4">
             <Controller
               name="muscleGroupId"
               control={control}
@@ -164,11 +192,48 @@ function EditExercise({
               )}
             />
 
+            {!exercisesLibId ? (
+              <Input
+                placeholder="Nome do Exercício"
+                className="col-span-3"
+                {...register('name')}
+                disabled={isLoading}
+              />
+            ) : (
+              <Controller
+                name="exercisesLibId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    disabled={isLoading || !libraryExercises.length}
+                    value={
+                      field.value === undefined
+                        ? undefined
+                        : String(field.value)
+                    }
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className=" w-full">
+                      <SelectValue placeholder="Selecione um exercício da biblioteca" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {libraryExercises.map((ex) => (
+                          <SelectItem key={ex.id} value={ex.id}>
+                            {ex.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
+
             <div className="grid w-full grid-cols-4 items-center gap-4">
               <Input
                 placeholder="Séries"
                 className="col-span-2"
-                defaultValue={sets}
                 {...register('sets')}
                 disabled={isLoading}
               />
