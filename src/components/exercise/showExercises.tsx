@@ -21,6 +21,12 @@ import {
 import { useEffect, useState } from 'react'
 import DeleteExercise from './deleteExercise'
 
+interface ExerciseData {
+  id: string
+  name: string
+  description: string
+  muscleGroupId: number
+}
 interface ExerciseProps {
   id: string
   name: string
@@ -29,6 +35,7 @@ interface ExerciseProps {
   description: string
   muscleGroupId: string
   dayOfWeekId: string
+  exercisesLib: ExerciseData | null
 }
 
 type PageProps = {
@@ -104,6 +111,7 @@ function ShowExercises({ slug, id }: PageProps) {
             Sem atividades nesse dia!
           </div>
         )}
+
         <DragDropContext onDragEnd={handleDragDrop}>
           <Droppable droppableId="ROOT" type="group">
             {(provided) => (
@@ -136,7 +144,7 @@ function ShowExercises({ slug, id }: PageProps) {
                           <div className="flex h-16 items-center py-3 pl-2">
                             <div className="flex flex-grow flex-col items-start ">
                               <p className="text-md font-bold md:text-lg">
-                                {exercise.name}
+                                {exercise.name || exercise.exercisesLib?.name}
                               </p>
                               <p>
                                 {exercise.sets} séries x {exercise.reps}{' '}
