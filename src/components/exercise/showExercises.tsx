@@ -33,8 +33,9 @@ interface ExerciseProps {
   reps: string
   sets: string
   description: string
-  muscleGroupId: string
+  muscleGroupId: number
   dayOfWeekId: string
+  exercisesLibId?: string
   exercisesLib: ExerciseData | null
 }
 
@@ -49,6 +50,7 @@ function ShowExercises({ slug, id }: PageProps) {
 
   const { data, error, isValidating } = UseSWR(`/api/exercises?id=${id}`, {
     fetcher,
+    revalidateOnFocus: false,
   })
 
   useEffect(() => {
@@ -139,7 +141,8 @@ function ShowExercises({ slug, id }: PageProps) {
                           sets={exercise.sets}
                           description={exercise.description}
                           dayOfWeek={id}
-                          muscleGroupId={exercise.muscleGroupId}
+                          muscleGroupId={String(exercise.muscleGroupId)}
+                          exercisesLibId={exercise.exercisesLib?.id}
                         >
                           <div className="flex h-16 items-center py-3 pl-2">
                             <div className="flex flex-grow flex-col items-start ">
