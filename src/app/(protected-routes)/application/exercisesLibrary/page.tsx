@@ -53,7 +53,7 @@ const getGroupName = (groupId: number) => {
   return group ? group.name : 'Grupo não encontrado'
 }
 
-export const columns: ColumnDef<ExerciseProps>[] = [
+const columns: ColumnDef<ExerciseProps>[] = [
   {
     accessorKey: 'name',
     header: 'Nome',
