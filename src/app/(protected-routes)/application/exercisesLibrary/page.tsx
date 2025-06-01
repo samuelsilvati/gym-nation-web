@@ -22,6 +22,13 @@ import {
 } from '@/components/ui/table'
 import { api } from '@/lib/api'
 import { useSession } from 'next-auth/react'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ChevronDown } from 'lucide-react'
 
 type ExerciseProps = {
   id: string
@@ -124,6 +131,32 @@ export default function ExercisesLibraryTable() {
               onChange={(event) => setGlobalFilter(event.target.value)}
               className="max-w-sm"
             />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="rounded-md border">
             <Table>
