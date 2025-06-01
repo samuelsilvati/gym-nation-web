@@ -20,24 +20,7 @@ import {
 } from 'react-beautiful-dnd'
 import { useEffect, useState } from 'react'
 import DeleteExercise from './deleteExercise'
-
-interface ExerciseData {
-  id: string
-  name: string
-  description: string
-  muscleGroupId: number
-}
-interface ExerciseProps {
-  id: string
-  name: string
-  reps: string
-  sets: string
-  description: string
-  muscleGroupId: number
-  dayOfWeekId: string
-  exercisesLibId?: string
-  exercisesLib: ExerciseData | null
-}
+import { ExerciseProps } from '@/interfaces/exercise'
 
 type PageProps = {
   slug: string
