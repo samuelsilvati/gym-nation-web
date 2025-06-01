@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '../ui/textarea'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { api } from '@/lib/api'
@@ -19,6 +19,14 @@ import { useSession } from 'next-auth/react'
 import { ReactNode, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
 type EditExerciseProps = {
   id: string
@@ -63,9 +71,18 @@ function EditExercise({
   const {
     register,
     handleSubmit,
+    control,
     // formState: { errors },
   } = useForm<EditExerciseFormaData>({
     resolver: zodResolver(createExerciseFormSchema),
+    defaultValues: {
+      name,
+      reps,
+      sets,
+      description,
+      muscleGroupId: muscleGroupId ? Number(muscleGroupId) : undefined,
+      dayOfWeekId: dayOfWeek ? Number(dayOfWeek) : undefined,
+    },
   })
 
   const { data: session } = useSession()
@@ -96,7 +113,6 @@ function EditExercise({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit(createExercise)}>
           <Input
-            value={dayOfWeek}
             className="invisible hidden"
             {...register('dayOfWeekId')}
             disabled={isLoading}
@@ -118,40 +134,35 @@ function EditExercise({
                 disabled={isLoading}
               />
             </div>
-            <div className="grid grid-cols-2 items-center gap-4">
-              <select
-                id="muscleGroupId"
-                className="col-span-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                defaultValue={muscleGroupId}
-                {...register('muscleGroupId')}
-                disabled={isLoading}
-              >
-                <option value="" className="text-muted-foreground ">
-                  Escolha um grupo
-                </option>
-                <option value="1" className="text-secondary-foreground">
-                  Peito
-                </option>
-                <option value="2" className="text-secondary-foreground">
-                  Costas
-                </option>
-                <option value="3" className="text-secondary-foreground">
-                  Pernas
-                </option>
-                <option value="4" className="text-secondary-foreground">
-                  Ombros
-                </option>
-                <option value="5" className="text-secondary-foreground">
-                  Biceps
-                </option>
-                <option value="6" className="text-secondary-foreground">
-                  Triceps
-                </option>
-                <option value="7" className="text-secondary-foreground">
-                  Abdominais
-                </option>
-              </select>
-            </div>
+            <Controller
+              name="muscleGroupId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  disabled={isLoading}
+                  value={
+                    field.value === undefined ? undefined : String(field.value)
+                  }
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione o grupo muscular" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="1">Peito</SelectItem>
+                      <SelectItem value="2">Costas</SelectItem>
+                      <SelectItem value="3">Pernas</SelectItem>
+                      <SelectItem value="4">Ombros</SelectItem>
+                      <SelectItem value="5">Biceps</SelectItem>
+                      <SelectItem value="6">Triceps</SelectItem>
+                      <SelectItem value="7">Abdominais</SelectItem>
+                      <SelectItem value="9">Outros</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
 
             <div className="grid w-full grid-cols-4 items-center gap-4">
               <Input
@@ -164,7 +175,6 @@ function EditExercise({
               <Input
                 placeholder="Repetições"
                 className="col-span-2"
-                defaultValue={reps}
                 {...register('reps')}
                 disabled={isLoading}
               />
@@ -173,7 +183,6 @@ function EditExercise({
               <Textarea
                 className="col-span-4 resize-none"
                 placeholder="Observações..."
-                defaultValue={description}
                 {...register('description')}
                 disabled={isLoading}
               />
