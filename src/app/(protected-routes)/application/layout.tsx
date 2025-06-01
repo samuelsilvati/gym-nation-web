@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { HomeIcon, Dumbbell, UserCircle2 } from 'lucide-react'
+import { HomeIcon, Dumbbell, UserCircle2, Library } from 'lucide-react'
 import SignOutButton from '@/components/signoutButton'
 import { ModeToggle } from '@/components/themerModeToggle'
 import MenuFooter from '@/components/menuFooter'
@@ -58,6 +58,13 @@ export default async function PrivateLayout({
               >
                 <Dumbbell />
                 TREINOS
+              </Link>
+              <Link
+                href="/application/exercisesLibrary"
+                className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
+              >
+                <Library />
+                BIBLIOTECA DE EXERCICIOS
               </Link>
               <Link
                 href="/application"
