@@ -5,16 +5,7 @@ import CurrentDate from '@/components/currentDate'
 import { Card } from '@/components/ui/card'
 import ShowExerciseDetails from '@/components/exercise/showDetails'
 import CheckedExercise from '@/components/exercise/checkedExercise'
-
-interface ExerciseProps {
-  id: string
-  name: string
-  reps: string
-  sets: string
-  description: string
-  muscleGroupId: string
-  dayOfWeekId: string
-}
+import { ExerciseProps } from '@/interfaces/exercise'
 
 export default async function Home() {
   const session = await getServerSession(nextAuthOptions)
@@ -52,15 +43,17 @@ export default async function Home() {
               className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
             >
               <ShowExerciseDetails
-                name={exercise.name}
+                name={exercise.name || exercise.exercisesLib?.name}
                 reps={exercise.reps}
                 sets={exercise.sets}
-                description={exercise.description}
+                description={
+                  exercise.description || exercise.exercisesLib?.description
+                }
               >
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
-                      {exercise.name}
+                      {exercise.name || exercise.exercisesLib?.name}
                     </p>
                     <p>
                       {exercise.sets} séries x {exercise.reps} repetições
