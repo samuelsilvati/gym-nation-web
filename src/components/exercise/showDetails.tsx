@@ -4,10 +4,10 @@ import { Dumbbell, ImageIcon, Repeat } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 
 type ShowExerciseProps = {
-  name: string
+  name: string | undefined
   reps: string
   sets: string
-  description: string
+  description: string | undefined
 }
 
 type ButtonProps = {
