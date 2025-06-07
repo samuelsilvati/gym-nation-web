@@ -43,10 +43,10 @@ function MenuFooter() {
         />
       </Link>
       <Link
-        href="/signin"
+        href="/application/profile"
         className={cn(
           'flex flex-col items-center justify-center gap-2 p-2 text-xs font-bold opacity-60 transition-colors hover:opacity-80',
-          pathname === '/signin' && 'opacity-100',
+          pathname === '/application/profile"' && 'opacity-100',
         )}
       >
         <UserCircle2 />

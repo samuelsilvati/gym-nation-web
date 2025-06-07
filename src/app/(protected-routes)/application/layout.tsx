@@ -67,7 +67,7 @@ export default async function PrivateLayout({
                 BIBLIOTECA DE EXERCICIOS
               </Link>
               <Link
-                href="/application"
+                href="/application/profile"
                 className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
               >
                 <UserCircle2 />
