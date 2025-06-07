@@ -3,12 +3,15 @@
 import * as React from 'react'
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   SortingState,
+  VisibilityState,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,15 +29,20 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import CreateExerciseLib from '@/components/exerciseLib/createExerciseLib'
+import EditExerciseLib from '@/components/exerciseLib/editExerciseLib'
+import { Toaster } from '@/components/ui/toaster'
 
 type ExerciseProps = {
   id: string
   name: string
   description: string
-  muscleGroupId: number
+  muscleGroupId: string | number
 }
 
 const groups = [
@@ -45,19 +53,89 @@ const groups = [
   { id: 5, name: 'Biceps' },
   { id: 6, name: 'Triceps' },
   { id: 7, name: 'Abdominais' },
-  { id: 9, name: 'Outros' },
+  { id: 8, name: 'Outros' },
 ]
+const groupColors = {
+  1: 'bg-red-500', // Peito
+  2: 'bg-blue-500', // Costas
+  3: 'bg-green-500', // Pernas
+  4: 'bg-yellow-500', // Ombros
+  5: 'bg-purple-500', // Biceps
+  6: 'bg-pink-500', // Triceps
+  7: 'bg-orange-500', // Abdominais
+  8: 'bg-gray-500', // Outros
+} as const
 
 const getGroupName = (groupId: number) => {
   const group = groups.find((group) => group.id === groupId)
   return group ? group.name : 'Grupo não encontrado'
 }
 
+const getGroupColor = (groupId: number) => {
+  return groupColors[groupId as keyof typeof groupColors] || 'bg-slate-500'
+}
+
 const columns: ColumnDef<ExerciseProps>[] = [
   {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'name',
-    header: 'Nome',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Exercício
+          <ArrowUpDown />
+        </Button>
+      )
+    },
     cell: ({ row }) => <div>{row.getValue('name')}</div>,
+  },
+  {
+    accessorKey: 'muscleGroupId',
+    // header: 'Grupo Muscular',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Grupo Muscular
+          <ArrowUpDown />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div
+        className={`w-[100px] rounded border px-4 text-center text-xs font-semibold text-white ${getGroupColor(
+          Number(row.getValue('muscleGroupId')),
+        )}`}
+      >
+        {getGroupName(Number(row.getValue('muscleGroupId')))}
+      </div>
+    ),
   },
   {
     accessorKey: 'description',
@@ -65,11 +143,32 @@ const columns: ColumnDef<ExerciseProps>[] = [
     cell: ({ row }) => <div>{row.getValue('description')}</div>,
   },
   {
-    accessorKey: 'muscleGroupId',
-    header: 'Grupo Muscular',
-    cell: ({ row }) => (
-      <div>{getGroupName(Number(row.getValue('muscleGroupId')))}</div>
-    ),
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => {
+      const exercise = row.original
+
+      return (
+        <EditExerciseLib
+          id={exercise.id}
+          name={exercise.name}
+          description={exercise.description}
+          muscleGroupId={exercise.muscleGroupId}
+        >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Editar</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </EditExerciseLib>
+      )
+    },
   },
 ]
 
@@ -77,9 +176,13 @@ export default function ExercisesLibraryTable() {
   const [exercises, setExercises] = React.useState<ExerciseProps[]>([])
   const [loading, setLoading] = React.useState(true)
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = React.useState('')
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  )
   const { data: session } = useSession()
-
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
   React.useEffect(() => {
     const fetchExercises = async () => {
       setLoading(true)
@@ -100,37 +203,46 @@ export default function ExercisesLibraryTable() {
       }
     }
     fetchExercises()
-  }, [])
+  }, [session?.user.token])
 
   const table = useReactTable({
     data: exercises,
     columns,
-    state: {
-      sorting,
-      globalFilter,
-    },
     onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: (row, columnId, filterValue) => {
-      // Filtro simples por nome ou descrição
-      const value = row.getValue(columnId)
-      return String(value).toLowerCase().includes(filterValue.toLowerCase())
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
     },
   })
 
   return (
     <div className="flex min-h-screen">
-      <div className="container mt-16 max-w-4xl px-2 pb-28 md:px-8 md:pb-0">
+      <div className="container mt-16 max-w-7xl px-2 pb-28 md:px-8 md:pb-0">
         <div className="w-full">
           <div className="flex items-center py-4">
+            <Toaster />
             <Input
               placeholder="Filtrar exercícios..."
-              value={globalFilter}
-              onChange={(event) => setGlobalFilter(event.target.value)}
+              value={
+                (table.getColumn('name')?.getFilterValue() as string) ?? ''
+              }
+              onChange={(event) =>
+                table.getColumn('name')?.setFilterValue(event.target.value)
+              }
               className="max-w-sm"
             />
+            <div className="ml-3">
+              <CreateExerciseLib />
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
@@ -213,6 +325,11 @@ export default function ExercisesLibraryTable() {
             </Table>
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex-1 text-sm text-muted-foreground">
+              {table.getFilteredSelectedRowModel().rows.length} de{' '}
+              {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+            </div>
+            <div className="space-x-2"></div>
             <Button
               variant="outline"
               size="sm"
