@@ -11,13 +11,17 @@ export default async function Home() {
   const session = await getServerSession(nextAuthOptions)
 
   const token = session?.user.token
-
-  const date = new Date()
-  const saoPauloTimeZone = 'America/Sao_Paulo'
-  const options = { timeZone: saoPauloTimeZone }
-
-  const currentDayOfWeek =
-    new Date(date.toLocaleString('en-US', options)).getDay() + 1
+  const getCurrentDayInBrazil = () => {
+    // Cria uma data usando a string com fuso horário específico
+    const date = new Date(
+      new Date().toLocaleString('en-US', {
+        timeZone: 'America/Sao_Paulo',
+      }),
+    )
+    // Retorna o dia da semana (1-7)
+    return date.getDay() + 1
+  }
+  const currentDayOfWeek = getCurrentDayInBrazil()
 
   const response = await api.get(
     `/exercises-by-day-of-week/${currentDayOfWeek}`,
