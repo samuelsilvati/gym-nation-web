@@ -17,17 +17,21 @@ import { useState } from 'react'
 
 type DeleteExerciseProps = {
   exerciseId: string
+  onSuccess?: () => void
 }
 
-function DeleteExercise({ exerciseId }: DeleteExerciseProps) {
+function DeleteExercise({ exerciseId, onSuccess }: DeleteExerciseProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
   async function handleDelete() {
     setIsLoading(true)
     try {
       await axios.delete(`/api/exercises?id=${exerciseId}`)
-      window.location.reload()
+      setIsLoading(false)
+      setOpen(false)
+      onSuccess?.()
     } catch (error) {
       setIsLoading(false)
       toast({
@@ -37,7 +41,7 @@ function DeleteExercise({ exerciseId }: DeleteExerciseProps) {
     }
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Toaster />
       <DialogTrigger className="text-red-900 dark:text-red-200">
         <Trash2 />

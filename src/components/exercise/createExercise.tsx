@@ -33,10 +33,12 @@ import { ExerciseProps } from '@/interfaces/exercise'
 
 type DayOfWeekProps = {
   dayOfWeek: string
+  onSuccess?: () => void
 }
 
-function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
+function CreateExercise({ dayOfWeek, onSuccess }: DayOfWeekProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const { toast } = useToast()
   const [associate, setAssociate] = useState(true)
   const [libraryExercises, setLibraryExercises] = useState<ExerciseProps[]>([])
@@ -110,7 +112,9 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
           Authorization: `Bearer ${session?.user.token}`,
         },
       })
-      window.location.reload()
+      setIsLoading(false)
+      setOpen(false)
+      onSuccess?.()
     } catch (error) {
       console.log(error)
       toast({
@@ -121,7 +125,7 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
     }
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Adicionar exercício</Button>
       </DialogTrigger>

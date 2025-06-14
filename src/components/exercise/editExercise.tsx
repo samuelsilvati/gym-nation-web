@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { ExerciseProps } from '@/interfaces/exercise'
 
 type EditExerciseProps = {
   id: string
@@ -41,6 +42,10 @@ type EditExerciseProps = {
 
 type ButtonProps = {
   children: ReactNode
+}
+
+type CopyTrainingProps = {
+  onSuccess?: () => void
 }
 
 const editExerciseFormSchema = z.object({
@@ -70,9 +75,10 @@ function EditExercise({
   muscleGroupId,
   exercisesLibId,
   children,
-}: EditExerciseProps & ButtonProps) {
+  onSuccess,
+}: EditExerciseProps & ButtonProps & CopyTrainingProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [libraryExercises, setLibraryExercises] = useState<any[]>([])
+  const [libraryExercises, setLibraryExercises] = useState<ExerciseProps[]>([])
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<
     string | undefined
   >(undefined)
@@ -116,7 +122,9 @@ function EditExercise({
           Authorization: `Bearer ${session?.user.token}`,
         },
       })
-      window.location.reload()
+      setIsLoading(false)
+      setOpen(false)
+      onSuccess?.()
     } catch (error) {
       console.log(error)
       toast({

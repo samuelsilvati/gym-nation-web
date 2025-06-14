@@ -135,6 +135,7 @@ function ShowExercises({ slug, id }: PageProps) {
                           dayOfWeek={id}
                           muscleGroupId={String(exercise.muscleGroupId)}
                           exercisesLibId={exercise.exercisesLib?.id}
+                          onSuccess={handleRefresh}
                         >
                           <div className="flex h-16 items-center py-3 pl-2">
                             <div className="flex flex-grow flex-col items-start ">
@@ -149,7 +150,10 @@ function ShowExercises({ slug, id }: PageProps) {
                           </div>
                         </EditExercise>
 
-                        <DeleteExercise exerciseId={exercise.id} />
+                        <DeleteExercise
+                          exerciseId={exercise.id}
+                          onSuccess={handleRefresh}
+                        />
                       </Card>
                     )}
                   </Draggable>
@@ -161,7 +165,7 @@ function ShowExercises({ slug, id }: PageProps) {
         </DragDropContext>
       </div>
       <div className="mx-auto pt-4 text-center">
-        <CreateExercise dayOfWeek={id} />
+        <CreateExercise dayOfWeek={id} onSuccess={handleRefresh} />
       </div>
     </div>
   )
