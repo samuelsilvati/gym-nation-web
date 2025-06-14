@@ -29,6 +29,7 @@ import {
 } from '../ui/select'
 import { Switch } from '../ui/switch'
 import { Label } from '../ui/label'
+import { ExerciseProps } from '@/interfaces/exercise'
 
 type DayOfWeekProps = {
   dayOfWeek: string
@@ -38,7 +39,7 @@ function CreateExercise({ dayOfWeek }: DayOfWeekProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
   const [associate, setAssociate] = useState(true)
-  const [libraryExercises, setLibraryExercises] = useState<any[]>([])
+  const [libraryExercises, setLibraryExercises] = useState<ExerciseProps[]>([])
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<
     string | undefined
   >(undefined)
