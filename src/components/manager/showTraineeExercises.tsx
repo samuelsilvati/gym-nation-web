@@ -107,7 +107,11 @@ function ShowTraineeExercises({
           {data.length === 0 && (
             <div className=" mb-3 flex w-full flex-col items-center justify-center py-3 font-bold">
               Sem atividades nesse dia!
-              <CopyTraining dayOfWeek={id} onSuccess={handleRefresh} />
+              <CopyTraining
+                dayOfWeek={id}
+                traineeId={traineeId}
+                onSuccess={handleRefresh}
+              />
             </div>
           )}
 
@@ -170,7 +174,11 @@ function ShowTraineeExercises({
           </DragDropContext>
         </div>
         <div className="mx-auto pt-4 text-center">
-          <CreateExercise dayOfWeek={id} onSuccess={handleRefresh} />
+          <CreateExercise
+            dayOfWeek={id}
+            traineeId={traineeId}
+            onSuccess={handleRefresh}
+          />
         </div>
       </DialogContent>
     </Dialog>

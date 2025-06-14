@@ -33,10 +33,11 @@ import { ExerciseProps } from '@/interfaces/exercise'
 
 type DayOfWeekProps = {
   dayOfWeek: string
+  traineeId?: string
   onSuccess?: () => void
 }
 
-function CreateExercise({ dayOfWeek, onSuccess }: DayOfWeekProps) {
+function CreateExercise({ dayOfWeek, traineeId, onSuccess }: DayOfWeekProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
@@ -107,11 +108,15 @@ function CreateExercise({ dayOfWeek, onSuccess }: DayOfWeekProps) {
   async function createExercise(data: CreateExerciseFormaData) {
     setIsLoading(true)
     try {
-      await api.post('/exercises', data, {
-        headers: {
-          Authorization: `Bearer ${session?.user.token}`,
+      await api.post(
+        `/exercises${traineeId ? `?traineeId=${traineeId}` : ''}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user.token}`,
+          },
         },
-      })
+      )
       setIsLoading(false)
       setOpen(false)
       onSuccess?.()

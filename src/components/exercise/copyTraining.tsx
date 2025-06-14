@@ -27,12 +27,13 @@ import { Card } from '@/components/ui/card'
 
 type DayOfWeekProps = {
   dayOfWeek: string
+  traineeId?: string
 }
 type CopyTrainingProps = DayOfWeekProps & {
   onSuccess?: () => void
 }
 
-function CopyTraining({ dayOfWeek, onSuccess }: CopyTrainingProps) {
+function CopyTraining({ dayOfWeek, traineeId, onSuccess }: CopyTrainingProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
@@ -71,7 +72,7 @@ function CopyTraining({ dayOfWeek, onSuccess }: CopyTrainingProps) {
     try {
       for (const exercise of training) {
         await api.post(
-          '/exercises',
+          `/exercises${traineeId ? `?traineeId=${traineeId}` : ''}`,
           {
             name: exercise.name,
             description: exercise.description,
