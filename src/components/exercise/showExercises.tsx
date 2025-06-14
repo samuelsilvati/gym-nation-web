@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from 'react'
 import DeleteExercise from './deleteExercise'
 import { ExerciseProps } from '@/interfaces/exercise'
+import CopyTraining from './copyTraining'
 
 type PageProps = {
   slug: string
@@ -28,13 +29,17 @@ type PageProps = {
 }
 
 function ShowExercises({ slug, id }: PageProps) {
+  const [refreshKey, setRefreshKey] = useState(0)
   const [orderedData, setOrderedData] = useState<ExerciseProps[]>([])
   const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
-  const { data, error, isValidating } = UseSWR(`/api/exercises?id=${id}`, {
-    fetcher,
-    revalidateOnFocus: false,
-  })
+  const { data, error, isValidating } = UseSWR(
+    `/api/exercises?id=${id}&refresh=${refreshKey}`,
+    {
+      fetcher,
+      revalidateOnFocus: false,
+    },
+  )
 
   useEffect(() => {
     if (data) {
@@ -54,6 +59,9 @@ function ShowExercises({ slug, id }: PageProps) {
         </div>
       </div>
     )
+  function handleRefresh() {
+    setRefreshKey((prevKey) => prevKey + 1)
+  }
 
   const handleDragDrop = async (results: DropResult) => {
     const { source, destination, type } = results
@@ -92,8 +100,9 @@ function ShowExercises({ slug, id }: PageProps) {
       </div>
       <div className="pt-3">
         {data.length === 0 && (
-          <div className=" mb-3 flex w-full items-center justify-center py-3 font-bold">
+          <div className=" mb-3 flex w-full flex-col items-center justify-center py-3 font-bold">
             Sem atividades nesse dia!
+            <CopyTraining dayOfWeek={id} onSuccess={handleRefresh} />
           </div>
         )}
 
