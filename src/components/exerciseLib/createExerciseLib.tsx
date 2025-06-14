@@ -28,8 +28,13 @@ import {
   SelectValue,
 } from '../ui/select'
 
-function CreateExerciseLib() {
+type CreateExerciseProps = {
+  onSuccess?: () => void
+}
+
+function CreateExerciseLib({ onSuccess }: CreateExerciseProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
   const createExerciseFormSchema = z.object({
@@ -62,7 +67,9 @@ function CreateExerciseLib() {
           Authorization: `Bearer ${session?.user.token}`,
         },
       })
-      window.location.reload()
+      setIsLoading(false)
+      setOpen(false)
+      onSuccess?.()
     } catch (error) {
       console.log(error)
       toast({
@@ -73,7 +80,7 @@ function CreateExerciseLib() {
     }
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Adicionar exercício</Button>
       </DialogTrigger>

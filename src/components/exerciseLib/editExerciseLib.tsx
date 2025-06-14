@@ -34,6 +34,7 @@ type EditExerciseProps = {
   description: string
   muscleGroupId: string | number
   children?: React.ReactNode
+  onSuccess?: () => void
 }
 
 const editExerciseFormSchema = z.object({
@@ -51,6 +52,7 @@ function EditExerciseLib({
   description,
   muscleGroupId,
   children,
+  onSuccess,
 }: EditExerciseProps) {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
@@ -80,7 +82,9 @@ function EditExerciseLib({
           Authorization: `Bearer ${session?.user.token}`,
         },
       })
-      window.location.reload()
+      setIsLoading(false)
+      setOpen(false)
+      onSuccess?.()
     } catch (error) {
       console.log(error)
       toast({

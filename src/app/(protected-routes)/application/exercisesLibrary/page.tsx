@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import UseSWR from 'swr'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -23,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { api } from '@/lib/api'
 import { useSession } from 'next-auth/react'
 import {
   DropdownMenu,
@@ -37,6 +37,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import CreateExerciseLib from '@/components/exerciseLib/createExerciseLib'
 import EditExerciseLib from '@/components/exerciseLib/editExerciseLib'
 import { Toaster } from '@/components/ui/toaster'
+import axios from 'axios'
 
 type ExerciseProps = {
   id: string
@@ -45,136 +46,9 @@ type ExerciseProps = {
   muscleGroupId: string | number
 }
 
-const groups = [
-  { id: 1, name: 'Peito' },
-  { id: 2, name: 'Costas' },
-  { id: 3, name: 'Pernas' },
-  { id: 4, name: 'Ombros' },
-  { id: 5, name: 'Biceps' },
-  { id: 6, name: 'Triceps' },
-  { id: 7, name: 'Abdominais' },
-  { id: 8, name: 'Outros' },
-]
-const groupColors = {
-  1: 'bg-red-500', // Peito
-  2: 'bg-blue-500', // Costas
-  3: 'bg-green-500', // Pernas
-  4: 'bg-yellow-500', // Ombros
-  5: 'bg-purple-500', // Biceps
-  6: 'bg-pink-500', // Triceps
-  7: 'bg-orange-500', // Abdominais
-  8: 'bg-gray-500', // Outros
-} as const
-
-const getGroupName = (groupId: number) => {
-  const group = groups.find((group) => group.id === groupId)
-  return group ? group.name : 'Grupo não encontrado'
-}
-
-const getGroupColor = (groupId: number) => {
-  return groupColors[groupId as keyof typeof groupColors] || 'bg-slate-500'
-}
-
-const columns: ColumnDef<ExerciseProps>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Exercício
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue('name')}</div>,
-  },
-  {
-    accessorKey: 'muscleGroupId',
-    // header: 'Grupo Muscular',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Grupo Muscular
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div
-        className={`w-[100px] rounded border px-4 text-center text-xs font-semibold text-white ${getGroupColor(
-          Number(row.getValue('muscleGroupId')),
-        )}`}
-      >
-        {getGroupName(Number(row.getValue('muscleGroupId')))}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descrição',
-    cell: ({ row }) => <div>{row.getValue('description')}</div>,
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const exercise = row.original
-
-      return (
-        <EditExerciseLib
-          id={exercise.id}
-          name={exercise.name}
-          description={exercise.description}
-          muscleGroupId={exercise.muscleGroupId}
-        >
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Editar</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </EditExerciseLib>
-      )
-    },
-  },
-]
-
 export default function ExercisesLibraryTable() {
   const [exercises, setExercises] = React.useState<ExerciseProps[]>([])
-  const [loading, setLoading] = React.useState(true)
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -183,27 +57,163 @@ export default function ExercisesLibraryTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+
+  const [refreshKey, setRefreshKey] = React.useState(0)
+
+  const fetcher = (url: string) =>
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${session?.user.token}`,
+        },
+      })
+      .then((res) => res.data)
+
+  const { data, isValidating } = UseSWR(
+    `${process.env.NEXT_PUBLIC_API_URL}/exercisesLib?refresh=${refreshKey}`,
+    {
+      fetcher,
+      revalidateOnFocus: false,
+    },
+  )
+
   React.useEffect(() => {
-    const fetchExercises = async () => {
-      setLoading(true)
-      // getServerSession is only available on the server, so you need to handle auth differently on the client.
-      // If you need the token, consider passing it as a prop or using a client-side auth solution.
-      // For now, we'll assume the API is accessible without the session token.
-      try {
-        const response = await api.get('/exercisesLib', {
-          headers: {
-            Authorization: `Bearer ${session?.user.token}`,
-          },
-        })
-        setExercises(response.data)
-      } catch (error) {
-        setExercises([])
-      } finally {
-        setLoading(false)
-      }
+    if (data) {
+      setExercises([...data])
     }
-    fetchExercises()
-  }, [session?.user.token])
+  }, [data])
+
+  function handleRefresh() {
+    setRefreshKey((prevKey) => prevKey + 1)
+  }
+
+  const groups = [
+    { id: 1, name: 'Peito' },
+    { id: 2, name: 'Costas' },
+    { id: 3, name: 'Pernas' },
+    { id: 4, name: 'Ombros' },
+    { id: 5, name: 'Biceps' },
+    { id: 6, name: 'Triceps' },
+    { id: 7, name: 'Abdominais' },
+    { id: 8, name: 'Outros' },
+  ]
+  const groupColors = {
+    1: 'bg-red-500', // Peito
+    2: 'bg-blue-500', // Costas
+    3: 'bg-green-500', // Pernas
+    4: 'bg-yellow-500', // Ombros
+    5: 'bg-purple-500', // Biceps
+    6: 'bg-pink-500', // Triceps
+    7: 'bg-orange-500', // Abdominais
+    8: 'bg-gray-500', // Outros
+  } as const
+
+  const getGroupName = (groupId: number) => {
+    const group = groups.find((group) => group.id === groupId)
+    return group ? group.name : 'Grupo não encontrado'
+  }
+
+  const getGroupColor = (groupId: number) => {
+    return groupColors[groupId as keyof typeof groupColors] || 'bg-slate-500'
+  }
+
+  const columns: ColumnDef<ExerciseProps>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Exercício
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div>{row.getValue('name')}</div>,
+    },
+    {
+      accessorKey: 'muscleGroupId',
+      // header: 'Grupo Muscular',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Grupo Muscular
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => (
+        <div
+          className={`w-[100px] rounded border px-4 text-center text-xs font-semibold text-white ${getGroupColor(
+            Number(row.getValue('muscleGroupId')),
+          )}`}
+        >
+          {getGroupName(Number(row.getValue('muscleGroupId')))}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'description',
+      header: 'Descrição',
+      cell: ({ row }) => <div>{row.getValue('description')}</div>,
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const exercise = row.original
+
+        return (
+          <EditExerciseLib
+            id={exercise.id}
+            name={exercise.name}
+            description={exercise.description}
+            muscleGroupId={exercise.muscleGroupId}
+            onSuccess={handleRefresh}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Editar</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </EditExerciseLib>
+        )
+      },
+    },
+  ]
 
   const table = useReactTable({
     data: exercises,
@@ -241,7 +251,7 @@ export default function ExercisesLibraryTable() {
               className="max-w-sm"
             />
             <div className="ml-3">
-              <CreateExerciseLib />
+              <CreateExerciseLib onSuccess={handleRefresh} />
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -289,7 +299,7 @@ export default function ExercisesLibraryTable() {
                 ))}
               </TableHeader>
               <TableBody>
-                {loading ? (
+                {isValidating || !data ? (
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
