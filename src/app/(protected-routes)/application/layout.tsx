@@ -12,6 +12,7 @@ import decode from 'jwt-decode'
 
 interface ApiToken {
   exp: number
+  role?: string
 }
 
 export default async function PrivateLayout({
@@ -20,6 +21,7 @@ export default async function PrivateLayout({
   children: ReactNode
 }) {
   const session = await getServerSession(nextAuthOptions)
+  let userRule = 'USER'
 
   if (!session) {
     return redirect('/signin')
@@ -27,10 +29,14 @@ export default async function PrivateLayout({
 
   if (session) {
     const ApiToken = session?.user.token
-    const TokenAge: ApiToken = decode(ApiToken as string)
+    const Token: ApiToken = decode(ApiToken as string)
     const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
-    if (currentTimestampInSeconds >= TokenAge.exp) {
+    if (currentTimestampInSeconds >= Token.exp) {
       return redirect('/signout')
+    }
+    console.log('Token:', Token)
+    if (Token.role && Token.role === 'ADMIN') {
+      userRule = 'ADMIN'
     }
   }
 
@@ -59,13 +65,15 @@ export default async function PrivateLayout({
                 <Dumbbell />
                 TREINOS
               </Link>
-              <Link
-                href="/application/exercisesLibrary"
-                className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
-              >
-                <Library />
-                BIBLIOTECA DE EXERCICIOS
-              </Link>
+              {userRule === 'ADMIN' && (
+                <Link
+                  href="/application/exercisesLibrary"
+                  className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
+                >
+                  <Library />
+                  BIBLIOTECA DE EXERCICIOS
+                </Link>
+              )}
               <Link
                 href="/application/profile"
                 className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
