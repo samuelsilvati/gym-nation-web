@@ -7,15 +7,16 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
   const traineeId = searchParams.get('traineeId')
-  const res = await fetch(
-    `${process.env.API_URL}/exercises-by-day-of-week/${id}?traineeId=${traineeId}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session?.user.token}`,
-      },
+  let url = `${process.env.API_URL}/exercises-by-day-of-week/${id}`
+  if (traineeId) {
+    url += `?traineeId=${traineeId}`
+  }
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session?.user.token}`,
     },
-  )
+  })
   const exercises = await res.json()
 
   return NextResponse.json(exercises)
