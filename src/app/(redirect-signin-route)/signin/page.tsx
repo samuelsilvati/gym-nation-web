@@ -1,7 +1,7 @@
-import SignInForm from '@/components/signInForm'
+import GoogleSignIn from '@/components/googleSignIn'
 
 function SignIn() {
-  return <SignInForm />
+  return <GoogleSignIn />
 }
 
 export default SignIn

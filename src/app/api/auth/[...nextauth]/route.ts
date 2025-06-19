@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 
 const nextAuthOptions: NextAuthOptions = {
   providers: [
@@ -25,14 +26,40 @@ const nextAuthOptions: NextAuthOptions = {
         return null
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      if (account?.provider === 'google') {
+        const apiResponse = await fetch(`${process.env.API_URL}/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.name,
+            googleId: user.id,
+          }),
+        })
+        const data = await apiResponse.json()
+        token.accessToken = data.token
+      }
+
       return { ...token, ...user }
     },
+    // async jwt({ token, user }) {
+    //   return { ...token, ...user }
+    // },
 
     async session({ session, token }) {
-      session.user = token as any
+      if (token) {
+        session.user = {
+          ...session.user,
+          token: typeof token.accessToken === 'string' ? token.accessToken : '',
+        }
+      }
       return session
     },
   },
