@@ -1,16 +1,24 @@
-import { ModeToggle } from '@/components/themerModeToggle'
-import Link from 'next/link'
+import CTA from '@/components/CTA'
+import Features from '@/components/Features'
+import Footer from '@/components/Footer'
+import Hero from '@/components/Hero'
+import { getServerSession } from 'next-auth'
+import { nextAuthOptions } from './api/auth/[...nextauth]/route'
+import { redirect } from 'next/navigation'
+// import Testimonials from '@/components/Testimonials'
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(nextAuthOptions)
+  if (session) {
+    redirect('/application')
+  }
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between bg-background p-24">
-      <Link
-        href="/signin"
-        className="rounded bg-black px-6 py-2 text-white dark:bg-white dark:text-black"
-      >
-        Login
-      </Link>
-      <ModeToggle />
+    <div>
+      <Hero />
+      <CTA />
+      <Features />
+      {/* <Testimonials /> */}
+      <Footer />
     </div>
   )
 }
