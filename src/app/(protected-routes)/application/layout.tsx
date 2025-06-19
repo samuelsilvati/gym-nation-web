@@ -35,13 +35,18 @@ export default async function PrivateLayout({
 
   if (session) {
     const ApiToken = session?.user.token
-    const Token: ApiToken = decode(ApiToken as string)
-    const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
-    if (currentTimestampInSeconds >= Token.exp) {
+    try {
+      const Token: ApiToken = decode(ApiToken as string)
+      const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
+      if (currentTimestampInSeconds >= Token.exp) {
+        return redirect('/signout')
+      }
+      if (Token.role && Token.role === 'ADMIN') {
+        userRule = 'ADMIN'
+      }
+    } catch (error) {
+      console.error(error)
       return redirect('/signout')
-    }
-    if (Token.role && Token.role === 'ADMIN') {
-      userRule = 'ADMIN'
     }
   }
 
