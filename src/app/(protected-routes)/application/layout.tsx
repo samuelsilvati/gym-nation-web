@@ -1,7 +1,7 @@
 import NextAuthSessionProvider from '@/providers/sessionProvider'
 import { getServerSession } from 'next-auth'
 import { ReactNode } from 'react'
-import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
+import { nextAuthOptions } from '@/lib/nextauth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -15,11 +15,7 @@ import SignOutButton from '@/components/signoutButton'
 import { ModeToggle } from '@/components/themerModeToggle'
 import MenuFooter from '@/components/menuFooter'
 import decode from 'jwt-decode'
-
-interface ApiToken {
-  exp: number
-  role?: string
-}
+import { ApiToken } from '@/interfaces/apiToken'
 
 export default async function PrivateLayout({
   children,

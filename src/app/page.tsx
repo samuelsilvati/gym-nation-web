@@ -3,7 +3,7 @@ import Features from '@/components/Features'
 import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import { getServerSession } from 'next-auth'
-import { nextAuthOptions } from './api/auth/[...nextauth]/route'
+import { nextAuthOptions } from '@/lib/nextauth'
 import { redirect } from 'next/navigation'
 // import Testimonials from '@/components/Testimonials'
 

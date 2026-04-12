@@ -99,7 +99,7 @@ export const nextAuthOptions: NextAuthOptions = {
           if (!res.ok) {
             // Backend might return 409 when the user already exists but still provide a token
             if (res.status === 409 && userData && userData.token) {
-              ;(user as any).token = userData.token
+              ; (user as any).token = userData.token
               return true
             }
 
@@ -122,7 +122,7 @@ export const nextAuthOptions: NextAuthOptions = {
           console.log('Google signin user data:', userData)
 
           if (userData && userData.token) {
-            ;(user as any).token = userData.token
+            ; (user as any).token = userData.token
             return true
           }
 
