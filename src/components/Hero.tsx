@@ -31,7 +31,14 @@ const Hero = () => {
                 href="/signin"
                 className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl"
               >
-                Começar Grátis
+                Login com Google
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link
+                href="/signin-credentials"
+                className="flex items-center gap-2 rounded-lg border border-blue-600 px-8 py-3 text-blue-600 transition-all duration-300 hover:bg-blue-50"
+              >
+                Login com Email
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </div>
