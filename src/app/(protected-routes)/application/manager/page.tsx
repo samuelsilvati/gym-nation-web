@@ -47,6 +47,7 @@ import { User } from '@/interfaces/user'
 import TraineeDetails from '@/components/manager/traineeDetails'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import ShowTraineeExercises from '@/components/manager/showTraineeExercises'
+import Link from 'next/link'
 
 export default function Manager() {
   const [trainee, setTrainee] = React.useState<User[]>([])
@@ -209,16 +210,21 @@ export default function Manager() {
         <div className="max-h-[90vh] w-full max-w-md overflow-y-auto">
           <div className="flex items-center py-4">
             <Toaster />
-            <Input
-              placeholder="Filtrar aluno..."
-              value={
-                (table.getColumn('name')?.getFilterValue() as string) ?? ''
-              }
-              onChange={(event) =>
-                table.getColumn('name')?.setFilterValue(event.target.value)
-              }
-              className="w-full"
-            />
+            <div className="flex w-full flex-col items-center justify-between gap-3">
+              <Link href="/application/manager/workout">
+                <Button variant="outline">Gerenciar Treinos</Button>
+              </Link>
+              <Input
+                placeholder="Filtrar aluno..."
+                value={
+                  (table.getColumn('name')?.getFilterValue() as string) ?? ''
+                }
+                onChange={(event) =>
+                  table.getColumn('name')?.setFilterValue(event.target.value)
+                }
+                className="w-full"
+              />
+            </div>
           </div>
           <div className="rounded-md border">
             <Table>
@@ -328,7 +334,7 @@ export default function Manager() {
                               className="mb-2 rounded bg-muted p-2"
                             >
                               <div className="font-semibold">
-                                {ex.name || ex.exercisesLib?.name}
+                                {ex.name || ex.exerciseLib?.name}
                               </div>
                               <div className="text-xs text-muted-foreground">
                                 {ex.sets} séries x {ex.reps} repetições

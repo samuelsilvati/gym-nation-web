@@ -80,7 +80,7 @@ function CopyTraining({ dayOfWeek, traineeId, onSuccess }: CopyTrainingProps) {
             reps: exercise.reps,
             muscleGroupId: exercise.muscleGroupId,
             dayOfWeekId: Number(dayOfWeek),
-            exercisesLibId: exercise.exercisesLibId,
+            exerciseLibId: exercise.exerciseLibId,
           },
           {
             headers: {
@@ -159,7 +159,7 @@ function CopyTraining({ dayOfWeek, traineeId, onSuccess }: CopyTrainingProps) {
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
-                      {exercise.name || exercise.exercisesLib?.name}
+                      {exercise.name || exercise.exerciseLib?.name}
                     </p>
                     <p>
                       {exercise.sets} séries x {exercise.reps} repetições

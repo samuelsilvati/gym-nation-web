@@ -143,13 +143,13 @@ function ShowTraineeExercises({
                             description={exercise.description}
                             dayOfWeek={id}
                             muscleGroupId={String(exercise.muscleGroupId)}
-                            exercisesLibId={exercise.exercisesLib?.id}
+                            exerciseLibId={exercise.exerciseLib?.id}
                             onSuccess={handleRefresh}
                           >
                             <div className="flex h-16 items-center py-3 pl-2">
                               <div className="flex flex-grow flex-col items-start ">
                                 <p className="text-md font-bold md:text-lg">
-                                  {exercise.name || exercise.exercisesLib?.name}
+                                  {exercise.name || exercise.exerciseLib?.name}
                                 </p>
                                 <p>
                                   {exercise.sets} séries x {exercise.reps}{' '}

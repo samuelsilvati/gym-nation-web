@@ -1,11 +1,17 @@
 import ShowExercises from '@/components/exercise/showExercises'
 import { Toaster } from '@/components/ui/toaster'
 
-function page({ params }: { params: { slug: string; id: string } }) {
+async function page({
+  params,
+}: {
+  params: Promise<{ slug: string; id: string }>
+}) {
+  const { slug, id } = await params
+
   return (
     <div className="mb-28 flex min-h-screen md:mb-0">
       <Toaster />
-      <ShowExercises slug={params.slug} id={params.id} />
+      <ShowExercises slug={slug} id={id} />
     </div>
   )
 }
