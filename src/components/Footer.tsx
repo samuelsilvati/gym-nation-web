@@ -1,142 +1,140 @@
 import { Instagram, Youtube, Facebook, Mail, Dumbbell } from 'lucide-react'
+import Link from 'next/link'
+
+const footerLinks = {
+  produto: [
+    { label: 'Funcionalidades', href: '#features' },
+    { label: 'Preços', href: '#pricing' },
+    { label: 'App Mobile', href: '#' },
+    { label: 'Integrações', href: '#' },
+  ],
+  profissionais: [
+    { label: 'Personal Trainers', href: '#' },
+    { label: 'Academias', href: '#' },
+    { label: 'Nutricionistas', href: '#' },
+    { label: 'Fisioterapeutas', href: '#' },
+  ],
+  suporte: [
+    { label: 'Central de Ajuda', href: '#' },
+    { label: 'Tutoriais', href: '#' },
+    { label: 'Contato', href: '#contact' },
+    { label: 'Status', href: '#' },
+  ],
+}
+
+const socialLinks = [
+  { icon: Instagram, href: '#', label: 'Instagram' },
+  { icon: Youtube, href: '#', label: 'YouTube' },
+  { icon: Facebook, href: '#', label: 'Facebook' },
+  { icon: Mail, href: '#', label: 'Email' },
+]
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 py-16 text-white">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Dumbbell className="h-8 w-8 text-blue-500" />
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-2xl font-bold text-transparent">
-                FitManager
+    <footer className="bg-gray-900 text-white dark:bg-slate-950">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-6">
+          <div className="lg:col-span-2">
+            <Link href="/" className="mb-6 inline-flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500">
+                <Dumbbell className="h-6 w-6 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-3xl font-bold text-transparent">
+                Gym Nation
               </span>
-            </div>
-            <p className="text-gray-400">
-              O app definitivo para gerenciamento de treinos e acompanhamento de
-              alunos.
+            </Link>
+            <p className="mb-6 max-w-sm text-gray-400">
+              A plataforma completa para personal trainers e academias
+              gerenciarem treinos de alunos de forma eficiente.
             </p>
             <div className="flex gap-4">
-              <a
-                href="#"
-                className="text-gray-400 transition-colors hover:text-white"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 transition-colors hover:text-white"
-              >
-                <Youtube className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 transition-colors hover:text-white"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 transition-colors hover:text-white"
-              >
-                <Mail className="h-5 w-5" />
-              </a>
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  aria-label={social.label}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-800 text-gray-400 transition-all duration-300 hover:bg-gray-700 hover:text-white"
+                >
+                  <social.icon className="h-5 w-5" />
+                </a>
+              ))}
             </div>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">Produto</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Funcionalidades
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Preços
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  App Mobile
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Integrações
-                </a>
-              </li>
+            <h3 className="mb-4 font-semibold text-white">Produto</h3>
+            <ul className="space-y-3">
+              {footerLinks.produto.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex items-center gap-1 text-gray-400 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">Para Profissionais</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Personal Trainers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Academias
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Nutricionistas
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Fisioterapeutas
-                </a>
-              </li>
+            <h3 className="mb-4 font-semibold text-white">
+              Para Profissionais
+            </h3>
+            <ul className="space-y-3">
+              {footerLinks.profissionais.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex items-center gap-1 text-gray-400 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">Suporte</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Central de Ajuda
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Tutoriais
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Contato
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  Status
-                </a>
-              </li>
+            <h3 className="mb-4 font-semibold text-white">Suporte</h3>
+            <ul className="space-y-3">
+              {footerLinks.suporte.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex items-center gap-1 text-gray-400 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between border-t border-gray-800 pt-8 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-8 md:flex-row">
           <p className="text-sm text-gray-400">
-            © 2024 FitManager. Todos os direitos reservados.
+            © 2024 Gym Nation. Todos os direitos reservados.
           </p>
-          <div className="mt-4 flex gap-6 text-sm text-gray-400 md:mt-0">
-            <a href="#" className="transition-colors hover:text-white">
+          <div className="flex gap-6 text-sm">
+            <Link
+              href="#"
+              className="text-gray-400 transition-colors hover:text-white"
+            >
               Política de Privacidade
-            </a>
-            <a href="#" className="transition-colors hover:text-white">
+            </Link>
+            <Link
+              href="/terms-of-service"
+              className="text-gray-400 transition-colors hover:text-white"
+            >
               Termos de Uso
-            </a>
-            <a href="#" className="transition-colors hover:text-white">
+            </Link>
+            <Link
+              href="#"
+              className="text-gray-400 transition-colors hover:text-white"
+            >
               Cookies
-            </a>
+            </Link>
           </div>
         </div>
       </div>
