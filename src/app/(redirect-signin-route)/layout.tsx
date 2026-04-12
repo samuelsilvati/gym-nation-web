@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { ReactNode } from 'react'
-import { nextAuthOptions } from '../api/auth/[...nextauth]/route'
+import { nextAuthOptions } from '@/lib/nextauth'
 import { redirect } from 'next/navigation'
 
 export default async function PrivateLayout({

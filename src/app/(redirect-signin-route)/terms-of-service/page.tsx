@@ -1,4 +1,4 @@
-import { nextAuthOptions } from '@/app/api/auth/[...nextauth]/route'
+import { nextAuthOptions } from '@/lib/nextauth'
 import { ModeToggle } from '@/components/themerModeToggle'
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
