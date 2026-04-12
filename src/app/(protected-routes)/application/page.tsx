@@ -53,8 +53,8 @@ export default async function Home() {
                   exercise.description || exercise.exerciseLib?.description
                 }
               >
-                  <div className="flex h-16 items-center py-3">
-                    <div className="flex flex-grow flex-col items-start ">
+                <div className="flex h-16 items-center py-3">
+                  <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
                       {exercise.name || exercise.exerciseLib?.name}
                     </p>
@@ -62,7 +62,7 @@ export default async function Home() {
                       {exercise.sets} séries x {exercise.reps} repetições
                     </p>
                   </div>
-                  </div>
+                </div>
               </ShowExerciseDetails>
               <div className="flex w-16 items-center justify-center">
                 <div className="flex items-center p-2">
