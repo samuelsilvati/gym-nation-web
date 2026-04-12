@@ -12,6 +12,6 @@ export interface ExerciseProps {
   description: string
   muscleGroupId: number
   dayOfWeekId: string
-  exercisesLibId?: string
-  exercisesLib: ExerciseData | null
+  exerciseLibId?: string
+  exerciseLib: ExerciseData | null
 }

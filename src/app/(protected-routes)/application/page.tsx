@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import { nextAuthOptions } from '../../api/auth/[...nextauth]/route'
+import { nextAuthOptions } from '@/lib/nextauth'
 import { api } from '@/lib/api'
 import CurrentDate from '@/components/currentDate'
 import { Card } from '@/components/ui/card'
@@ -47,17 +47,17 @@ export default async function Home() {
               className="mb-3 flex justify-between rounded-lg px-5 dark:text-slate-200"
             >
               <ShowExerciseDetails
-                name={exercise.name || exercise.exercisesLib?.name}
+                name={exercise.name || exercise.exerciseLib?.name}
                 reps={exercise.reps}
                 sets={exercise.sets}
                 description={
-                  exercise.description || exercise.exercisesLib?.description
+                  exercise.description || exercise.exerciseLib?.description
                 }
               >
                 <div className="flex h-16 items-center py-3">
                   <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
-                      {exercise.name || exercise.exercisesLib?.name}
+                      {exercise.name || exercise.exerciseLib?.name}
                     </p>
                     <p>
                       {exercise.sets} séries x {exercise.reps} repetições

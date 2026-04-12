@@ -37,7 +37,7 @@ type EditExerciseProps = {
   description: string
   dayOfWeek: string
   muscleGroupId: string | number
-  exercisesLibId?: string | null
+  exerciseLibId?: string | null
 }
 
 type ButtonProps = {
@@ -58,7 +58,7 @@ const editExerciseFormSchema = z.object({
     .nonempty('Campo obrigatório')
     .transform((value) => parseInt(value, 10)),
   dayOfWeekId: z.string().transform((value) => parseInt(value, 10)),
-  exercisesLibId: z
+  exerciseLibId: z
     .union([z.string().nonempty(), z.null(), z.undefined()])
     .transform((value) => value || null)
     .nullable()
@@ -73,7 +73,7 @@ function EditExercise({
   description,
   dayOfWeek,
   muscleGroupId,
-  exercisesLibId,
+  exerciseLibId,
   children,
   onSuccess,
 }: EditExerciseProps & ButtonProps & CopyTrainingProps) {
@@ -100,7 +100,7 @@ function EditExercise({
       sets,
       description,
       muscleGroupId: String(muscleGroupId),
-      exercisesLibId, // Assuming exercisesLibId is not used here
+      exerciseLibId, // Assuming exerciseLibId is not used here
     } as unknown as EditExerciseFormaData,
   })
 
@@ -108,12 +108,12 @@ function EditExercise({
   const muscleGroupIdWatch = watch('muscleGroupId')
 
   useEffect(() => {
-    if (exercisesLibId && muscleGroupIdWatch) {
+    if (exerciseLibId && muscleGroupIdWatch) {
       setSelectedMuscleGroup(String(muscleGroupIdWatch))
     } else {
       setSelectedMuscleGroup(undefined)
     }
-  }, [exercisesLibId, muscleGroupIdWatch])
+  }, [exerciseLibId, muscleGroupIdWatch])
   async function editExercise(data: EditExerciseFormaData) {
     setIsLoading(true)
     try {
@@ -148,7 +148,7 @@ function EditExercise({
           setIsLoading(false)
         })
     }
-  }, [exercisesLibId, open, selectedMuscleGroup, session?.user.token])
+  }, [exerciseLibId, open, selectedMuscleGroup, session?.user.token])
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -200,7 +200,7 @@ function EditExercise({
               )}
             />
 
-            {!exercisesLibId ? (
+            {!exerciseLibId ? (
               <Input
                 placeholder="Nome do Exercício"
                 className="col-span-3"
@@ -209,7 +209,7 @@ function EditExercise({
               />
             ) : (
               <Controller
-                name="exercisesLibId"
+                name="exerciseLibId"
                 control={control}
                 render={({ field }) => (
                   <Select

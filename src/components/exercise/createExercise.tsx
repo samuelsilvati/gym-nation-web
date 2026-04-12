@@ -58,8 +58,8 @@ function CreateExercise({ dayOfWeek, traineeId, onSuccess }: DayOfWeekProps) {
       .string()
       .nonempty('Campo obrigatório')
       .transform((value) => parseInt(value, 10)),
-    dayOfWeekId: z.string().transform((value) => parseInt(value, 10)),
-    exercisesLibId: z
+    dayOfWeek: z.string(),
+    exerciseLibId: z
       .union([z.string().nonempty(), z.undefined()])
       .transform((value) => (value !== undefined ? value : undefined)),
   })
@@ -139,7 +139,7 @@ function CreateExercise({ dayOfWeek, traineeId, onSuccess }: DayOfWeekProps) {
           <Input
             value={dayOfWeek}
             className="invisible hidden"
-            {...register('dayOfWeekId')}
+            {...register('dayOfWeek')}
             disabled={isLoading}
           />
           <DialogHeader>
@@ -194,7 +194,7 @@ function CreateExercise({ dayOfWeek, traineeId, onSuccess }: DayOfWeekProps) {
 
             {associate ? (
               <Controller
-                name="exercisesLibId"
+                name="exerciseLibId"
                 control={control}
                 render={({ field }) => (
                   <Select
