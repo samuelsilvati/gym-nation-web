@@ -1,36 +1,36 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from './ui/button'
-import { Loader2 } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
-import { signIn } from 'next-auth/react'
-import Image from 'next/image'
-import Link from 'next/link'
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
 
 function GoogleSignIn() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
   async function handleAuth() {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const UserData = await signIn('google', {
-      callbackUrl: '/application',
-    })
+    const UserData = (await signIn("google", {
+      callbackUrl: "/application",
+    })) as any;
 
     if (UserData?.error) {
       toast({
-        title: 'Erro ao fazer login',
-        variant: 'destructive',
-      })
+        title: "Erro ao fazer login",
+        variant: "destructive",
+      });
 
-      setIsLoading(false)
-      return
+      setIsLoading(false);
+      return;
     }
 
-    router.replace('/application')
+    router.replace("/application");
   }
   return (
     <div className="flex w-full max-w-xs flex-col gap-6 md:max-w-sm">
@@ -57,7 +57,7 @@ function GoogleSignIn() {
         )}
       </Button>
       <div>
-        Ao continuar você concorda com os nossos{' '}
+        Ao continuar você concorda com os nossos{" "}
         <Link
           href="/terms-of-service"
           className="text-gray-400 transition-colors hover:opacity-70"
@@ -66,7 +66,7 @@ function GoogleSignIn() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
-export default GoogleSignIn
+export default GoogleSignIn;

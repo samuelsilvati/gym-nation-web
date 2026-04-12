@@ -1,16 +1,15 @@
-import CTA from '@/components/CTA'
-import Features from '@/components/Features'
-import Footer from '@/components/Footer'
-import Hero from '@/components/Hero'
-import { getServerSession } from 'next-auth'
-import { nextAuthOptions } from '@/lib/nextauth'
-import { redirect } from 'next/navigation'
+import CTA from "@/components/CTA";
+import Features from "@/components/Features";
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 // import Testimonials from '@/components/Testimonials'
 
 export default async function Home() {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth();
   if (session) {
-    redirect('/application')
+    redirect("/application");
   }
   return (
     <div>
@@ -20,5 +19,5 @@ export default async function Home() {
       {/* <Testimonials /> */}
       <Footer />
     </div>
-  )
+  );
 }

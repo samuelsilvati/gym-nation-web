@@ -1,14 +1,13 @@
-import { nextAuthOptions } from '@/lib/nextauth'
-import { ModeToggle } from '@/components/themerModeToggle'
-import { getServerSession } from 'next-auth'
-import Link from 'next/link'
+import { ModeToggle } from "@/components/themerModeToggle";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
 
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 export default async function TermsOfService() {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth();
   if (session) {
-    redirect('/application')
+    redirect("/application");
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-between bg-background p-12 md:p-24">
@@ -66,5 +65,5 @@ export default async function TermsOfService() {
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,27 +1,26 @@
-import { getServerSession } from 'next-auth'
-import { nextAuthOptions } from '@/lib/nextauth'
-import { api } from '@/lib/api'
-import CurrentDate from '@/components/currentDate'
-import { Card } from '@/components/ui/card'
-import ShowExerciseDetails from '@/components/exercise/showDetails'
-import CheckedExercise from '@/components/exercise/checkedExercise'
-import { ExerciseProps } from '@/interfaces/exercise'
+import { auth } from "@/lib/auth";
+import { api } from "@/lib/api";
+import CurrentDate from "@/components/currentDate";
+import { Card } from "@/components/ui/card";
+import ShowExerciseDetails from "@/components/exercise/showDetails";
+import CheckedExercise from "@/components/exercise/checkedExercise";
+import { ExerciseProps } from "@/interfaces/exercise";
 
 export default async function Home() {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth();
 
-  const token = session?.user.token
+  const token = session?.user.token;
   const getCurrentDayInBrazil = () => {
     // Cria uma data usando a string com fuso horário específico
     const date = new Date(
-      new Date().toLocaleString('en-US', {
-        timeZone: 'America/Sao_Paulo',
+      new Date().toLocaleString("en-US", {
+        timeZone: "America/Sao_Paulo",
       }),
-    )
+    );
     // Retorna o dia da semana (1-7)
-    return date.getDay() + 1
-  }
-  const currentDayOfWeek = getCurrentDayInBrazil()
+    return date.getDay() + 1;
+  };
+  const currentDayOfWeek = getCurrentDayInBrazil();
 
   const response = await api.get(
     `/exercises-by-day-of-week/${currentDayOfWeek}`,
@@ -30,8 +29,8 @@ export default async function Home() {
         Authorization: `Bearer ${token}`,
       },
     },
-  )
-  const exercises: ExerciseProps[] = response.data
+  );
+  const exercises: ExerciseProps[] = response.data;
 
   return (
     <div className="flex min-h-screen">
@@ -54,8 +53,8 @@ export default async function Home() {
                   exercise.description || exercise.exerciseLib?.description
                 }
               >
-                <div className="flex h-16 items-center py-3">
-                  <div className="flex flex-grow flex-col items-start ">
+                  <div className="flex h-16 items-center py-3">
+                    <div className="flex flex-grow flex-col items-start ">
                     <p className="text-md font-bold md:text-lg">
                       {exercise.name || exercise.exerciseLib?.name}
                     </p>
@@ -63,7 +62,7 @@ export default async function Home() {
                       {exercise.sets} séries x {exercise.reps} repetições
                     </p>
                   </div>
-                </div>
+                  </div>
               </ShowExerciseDetails>
               <div className="flex w-16 items-center justify-center">
                 <div className="flex items-center p-2">
@@ -80,5 +79,5 @@ export default async function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }

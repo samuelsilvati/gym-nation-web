@@ -1,9 +1,8 @@
-import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
-import { nextAuthOptions } from '@/lib/nextauth'
+import { auth } from '@/lib/auth'
 
 export async function GET(request: Request) {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth()
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
   const traineeId = searchParams.get('traineeId')
@@ -24,7 +23,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const data = await request.json()
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth()
   const res = await fetch(`${process.env.API_URL}/exercise-order`, {
     method: 'POST',
     headers: {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth()
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
   const res = await fetch(`${process.env.API_URL}/exercise/${id}`, {

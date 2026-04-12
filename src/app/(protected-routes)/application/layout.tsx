@@ -1,53 +1,52 @@
-import NextAuthSessionProvider from '@/providers/sessionProvider'
-import { getServerSession } from 'next-auth'
-import { ReactNode } from 'react'
-import { nextAuthOptions } from '@/lib/nextauth'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import NextAuthSessionProvider from "@/providers/sessionProvider";
+import { auth } from "@/lib/auth";
+import { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import {
   HomeIcon,
   Dumbbell,
   UserCircle2,
   Library,
   FolderKanban,
-} from 'lucide-react'
-import SignOutButton from '@/components/signoutButton'
-import { ModeToggle } from '@/components/themerModeToggle'
-import MenuFooter from '@/components/menuFooter'
-import decode from 'jwt-decode'
-import { ApiToken } from '@/interfaces/apiToken'
+} from "lucide-react";
+import SignOutButton from "@/components/signoutButton";
+import { ModeToggle } from "@/components/themerModeToggle";
+import MenuFooter from "@/components/menuFooter";
+import decode from "jwt-decode";
+import { ApiToken } from "@/interfaces/apiToken";
 
 export default async function PrivateLayout({
   children,
 }: {
-  children: ReactNode
+  children: ReactNode;
 }) {
-  const session = await getServerSession(nextAuthOptions)
-  let userRule = 'USER'
+  const session = await auth();
+  let userRule = "USER";
 
   if (!session) {
-    return redirect('/signin')
+    return redirect("/signin");
   }
 
   if (session) {
-    const ApiToken = session?.user.token
+    const ApiToken = session?.user.token;
     try {
-      const Token: ApiToken = decode(ApiToken as string)
-      const currentTimestampInSeconds = Math.floor(Date.now() / 1000)
+      const Token: ApiToken = decode(ApiToken as string);
+      const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
       if (currentTimestampInSeconds >= Token.exp) {
-        return redirect('/signout')
+        return redirect("/signout");
       }
-      if (Token.role && Token.role === 'ADMIN') {
-        userRule = 'ADMIN'
+      if (Token.role && Token.role === "ADMIN") {
+        userRule = "ADMIN";
       }
     } catch (error) {
-      console.error(error)
-      return redirect('/signout')
+      console.error(error);
+      return redirect("/signout");
     }
   }
 
-  const userName = session?.user.name
-  const firstName = userName.split(' ')[0]
+  const userName = session?.user.name;
+  const firstName = userName.split(" ")[0];
   return (
     <>
       <header className="fixed z-50 mx-auto w-screen border-b border-border bg-background/50 py-2 backdrop-blur-md">
@@ -71,7 +70,7 @@ export default async function PrivateLayout({
                 <Dumbbell />
                 TREINOS
               </Link>
-              {userRule === 'ADMIN' && (
+              {userRule === "ADMIN" && (
                 <Link
                   href="/application/exercisesLibrary"
                   className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
@@ -80,7 +79,7 @@ export default async function PrivateLayout({
                   BIBLIOTECA DE EXERCICIOS
                 </Link>
               )}
-              {userRule === 'ADMIN' && (
+              {userRule === "ADMIN" && (
                 <Link
                   href="/application/manager"
                   className="flex items-center justify-center gap-2 p-2 text-xs font-bold"
@@ -109,5 +108,5 @@ export default async function PrivateLayout({
         <MenuFooter />
       </footer>
     </>
-  )
+  );
 }

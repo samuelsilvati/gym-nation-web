@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { NextAuthOptions } from 'next-auth'
+/* compat shim for older next-auth v4 config */
 import Credentials from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 
-export const nextAuthOptions: NextAuthOptions = {
+export const nextAuthOptions = {
   providers: [
     Credentials({
       name: 'credentials',
@@ -74,7 +74,7 @@ export const nextAuthOptions: NextAuthOptions = {
     signIn: '/signin',
   },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account }: any) {
       console.log('SignIn callback called with:', {
         user: user ? { id: user.id, email: user.email, name: user.name } : null,
         provider: account?.provider,
@@ -142,13 +142,13 @@ export const nextAuthOptions: NextAuthOptions = {
       console.log('Unknown provider or signin failed')
       return false
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user && 'token' in user) {
         token.accessToken = user.token
       }
       return token
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (token) {
         session.user = {
           ...session.user,

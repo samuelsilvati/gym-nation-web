@@ -1,17 +1,16 @@
-import { getServerSession } from 'next-auth'
-import { ReactNode } from 'react'
-import { nextAuthOptions } from '@/lib/nextauth'
-import { redirect } from 'next/navigation'
+import { ReactNode } from "react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function PrivateLayout({
   children,
 }: {
-  children: ReactNode
+  children: ReactNode;
 }) {
-  const session = await getServerSession(nextAuthOptions)
+  const session = await auth();
 
   if (session) {
-    redirect('/application')
+    redirect("/application");
   }
   return (
     <div className="flex h-screen w-screen">
@@ -23,7 +22,7 @@ export default async function PrivateLayout({
         </div>
         <div className="absolute bottom-0 mb-9 ml-9 text-sm text-slate-300">
           <span>
-            Foto de{' '}
+            Foto de{" "}
             <a
               href="https://unsplash.com/@codioful?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
               target="_blank"
@@ -31,8 +30,8 @@ export default async function PrivateLayout({
               rel="noreferrer"
             >
               Codioful (Formerly Gradienta)
-            </a>{' '}
-            na{' '}
+            </a>{" "}
+            na{" "}
             <a
               href="https://unsplash.com/pt-br/fotografias/m_7p45JfXQo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
               target="_blank"
@@ -48,5 +47,5 @@ export default async function PrivateLayout({
         {children}
       </div>
     </div>
-  )
+  );
 }

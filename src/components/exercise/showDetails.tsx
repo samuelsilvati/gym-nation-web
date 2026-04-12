@@ -1,18 +1,20 @@
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { ReactNode } from 'react'
-import { Dumbbell, ImageIcon, Repeat } from 'lucide-react'
-import { Skeleton } from '../ui/skeleton'
+"use client";
+
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ReactNode } from "react";
+import { Dumbbell, ImageIcon, Repeat } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 
 type ShowExerciseProps = {
-  name: string | undefined
-  reps: string
-  sets: string
-  description: string | undefined
-}
+  name: string | undefined;
+  reps: string;
+  sets: string;
+  description: string | undefined;
+};
 
 type ButtonProps = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
 function ShowExerciseDetails({
   name,
@@ -24,7 +26,9 @@ function ShowExerciseDetails({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="w-full">{children}</button>
+        <div role="button" tabIndex={0} className="w-full">
+          {children}
+        </div>
       </DialogTrigger>
       <DialogContent className="flex flex-col items-center justify-center sm:max-w-[425px]">
         <h1 className="text-xl">{name}</h1>
@@ -44,7 +48,7 @@ function ShowExerciseDetails({
         <div>{description}</div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default ShowExerciseDetails
+export default ShowExerciseDetails;
